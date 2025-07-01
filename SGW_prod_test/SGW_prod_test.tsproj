@@ -67,7 +67,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{395924F2-3B81-3B80-F5ED-D4AA52784383}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{AD6574E7-4BB3-8CF9-8B39-C956BE000518}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
@@ -812,7 +812,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 							<ModuleClass Class="DIO" Name="DIO" VendorId="2" ImageId="1001"/>
 							<Module Id="#x03090001" Type="DIO_2x" Class="DIO">
 								<Name>Module 1 (DIO_2x)</Name>
-								<ImageId>549</ImageId>
+								<ImageId>548</ImageId>
 								<ModuleData>02000000741b3000000004000000000000000000000000000000000000000000</ModuleData>
 								<PdoIndex>6656</PdoIndex>
 								<PdoIndex>6672</PdoIndex>
@@ -837,7 +837,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 							<ModuleClass Class="PWM" Name="PWM" VendorId="2" ImageId="1001"/>
 							<Module Id="#x03090003" Type="DIO_2x" Class="DIO Ext">
 								<Name>Module 3 (DIO_2x)</Name>
-								<ImageId>549</ImageId>
+								<ImageId>548</ImageId>
 								<ModuleData>02000000741b0000000004000000000000000000000000000000000000000000</ModuleData>
 								<PdoIndex>6688</PdoIndex>
 								<PdoIndex>6704</PdoIndex>
