@@ -3,22 +3,49 @@
   <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-    blink : BOOL := FALSE;           (* current state of the LED *)
-    t1    : TON  := (PT := T#1S);    (* 1-second timer           *)
-END_VAR
-]]></Declaration>
+    (* LED logic *)
+    blink   : BOOL := FALSE;
+    t1      : TON  := (PT := T#1S);
+
+    (* TF6340 helpers *)
+    TxBuf   : Tc2_SerialCom.ComBuffer;
+    RxBuf   : Tc2_SerialCom.ComBuffer;
+
+    fbPort  : Tc2_SerialCom.SerialLineControl;           // background task
+    fbSend  : Tc2_SerialCom.SendString;                  // one-shot sender
+    txBusy  : BOOL;                        // fbSend.Busy
+	txString  : STRING(40);
+END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* free-running timer *)
+      <ST><![CDATA[(*  Background handler – runs every cycle  *)
+fbPort(
+    Mode     := SERIALLINEMODE_PC_COM_PORT,
+    TxBuffer := TxBuf,
+    RxBuffer := RxBuf );
+
+(*  1-second toggle + send                    *)
 t1(IN := TRUE);
 
-IF t1.Q THEN
-    blink := NOT blink;    (* flip every second *)
-    t1(IN := FALSE);       (* restart timer     *)
-END_IF;
+IF t1.Q AND NOT txBusy THEN
+    blink := NOT blink;
 
-(* drive the outputs – opposite phases *)
-GLOBAL_VARS.DO_EL2008_0 :=  blink;      (* LED 1 *)
-GLOBAL_VARS.DO_EL2008_1 :=  NOT blink;  (* LED 2 *)]]></ST>
+    IF blink THEN
+        txString := CONCAT(CONCAT('LED1_ON', CHR(13)), CHR(10));
+    ELSE
+        txString := CONCAT(CONCAT('LED1_OFF', CHR(13)), CHR(10));
+    END_IF
+
+    fbSend(
+        SendString := txString,
+        TxBuffer   := TxBuf,
+        Busy       => txBusy );
+
+    t1(IN := FALSE);
+END_IF
+
+(*  Drive the EL2008s  *)
+GLOBAL_VARS.DO_EL2008_0 :=  blink;
+GLOBAL_VARS.DO_EL2008_1 :=  NOT blink;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

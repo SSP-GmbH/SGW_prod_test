@@ -67,19 +67,19 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{AD6574E7-4BB3-8CF9-8B39-C956BE000518}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{71874842-FEDB-A7CE-3865-AA5188FCF814}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_0</Name>
-							<Comment><![CDATA[ first output of EL2008 ]]></Comment>
+							<Comment><![CDATA[ EL2008 channel 1]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_1</Name>
-							<Comment><![CDATA[ second output          ]]></Comment>
+							<Comment><![CDATA[ EL2008 channel 2]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
