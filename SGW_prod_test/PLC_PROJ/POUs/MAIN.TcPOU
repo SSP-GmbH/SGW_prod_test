@@ -8,16 +8,17 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* run the timer continuously *)
+      <ST><![CDATA[(* free-running timer *)
 t1(IN := TRUE);
 
-IF t1.Q THEN                       (* one second elapsed? *)
-    blink := NOT blink;            (* toggle output state *)
-    t1(IN := FALSE);               (* reset timer         *)
+IF t1.Q THEN
+    blink := NOT blink;    (* flip every second *)
+    t1(IN := FALSE);       (* restart timer     *)
 END_IF;
 
-GLOBAL_VARS.DO_EL2008_0 := blink;  (* drive the first EL2008 channel *)
-]]></ST>
+(* drive the outputs – opposite phases *)
+GLOBAL_VARS.DO_EL2008_0 :=  blink;      (* LED 1 *)
+GLOBAL_VARS.DO_EL2008_1 :=  NOT blink;  (* LED 2 *)]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
