@@ -919,7 +919,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Image Id="5" AddrType="1" ImageType="1">
 					<Name>Image</Name>
 				</Image>
-				<Serial Baud="38400" Parity="1" StopBit="1" RsType="1" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" Timeout="300"/>
+				<Serial Baud="9600" Parity="1" StopBit="1" RsType="1" UPSDisableSysShutdown="true" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" FifoSize="16" Timeout="300"/>
 			</Device>
 			<Device Id="5" DevType="11" AmsPort="28677">
 				<Name>Device 5 (COM Port)</Name>
@@ -936,7 +936,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Image Id="6" AddrType="1" ImageType="1">
 					<Name>Image</Name>
 				</Image>
-				<Serial Baud="38400" Parity="1" StopBit="1" RsType="2" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" Timeout="300"/>
+				<Serial Baud="38400" Parity="1" StopBit="1" RsType="2" UPSDisableSysShutdown="true" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" FifoSize="16" Timeout="300"/>
 			</Device>
 			<Device Id="6" DevType="87" AmsPort="28678" AmsNetId="5.156.240.208.7.1" RemoteName="Device 6 (EL6751)">
 				<Name>Device 6 (EL6751)</Name>
