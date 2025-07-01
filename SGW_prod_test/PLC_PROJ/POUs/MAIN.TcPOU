@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+    blink : BOOL := FALSE;           (* current state of the LED *)
+    t1    : TON  := (PT := T#1S);    (* 1-second timer           *)
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* run the timer continuously *)
+t1(IN := TRUE);
+
+IF t1.Q THEN                       (* one second elapsed? *)
+    blink := NOT blink;            (* toggle output state *)
+    t1(IN := FALSE);               (* reset timer         *)
+END_IF;
+
+GLOBAL_VARS.DO_EL2008_0 := blink;  (* drive the first EL2008 channel *)
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
