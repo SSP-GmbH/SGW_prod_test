@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
   <GVL Name="GLOBAL_VARS" Id="{a07ed368-aff3-40fe-9fbb-b210d5bb7bb2}">
-    <Declaration><![CDATA[{attribute 'qualified_only'}
+    <Declaration><![CDATA[(* GVLs/GLOBAL_VARS *)
+
+{attribute 'qualified_only'}
 VAR_GLOBAL
     DO_EL2008_0 AT %Q* : BOOL;   // EL2008 channel 1
     DO_EL2008_1 AT %Q* : BOOL;   // EL2008 channel 2
-END_VAR]]></Declaration>
+END_VAR
+]]></Declaration>
   </GVL>
 </TcPlcObject>

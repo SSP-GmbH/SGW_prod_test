@@ -27,20 +27,21 @@ fbPort(
 t1(IN := TRUE);
 
 IF t1.Q AND NOT txBusy THEN
-    blink := NOT blink;
+    blink := NOT blink;                             (* flip LEDs *)
 
-    IF blink THEN
-        txString := CONCAT(CONCAT('LED1_ON', CHR(13)), CHR(10));
-    ELSE
-        txString := CONCAT(CONCAT('LED1_OFF', CHR(13)), CHR(10));
-    END_IF
+    (* build PSU command with CR/LF terminator *)
+	IF blink THEN
+		txString := 'ABCDEF';   // 15 V
+	ELSE
+		txString := 'AAAAAA';   // 5 V
+	END_IF
 
-    fbSend(
+    fbSend(                                         (* queue once *)
         SendString := txString,
         TxBuffer   := TxBuf,
         Busy       => txBusy );
 
-    t1(IN := FALSE);
+    t1(IN := FALSE);                                (* restart TON *)
 END_IF
 
 (*  Drive the EL2008s  *)
