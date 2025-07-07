@@ -67,7 +67,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{1FF72552-9B58-72A6-7222-7DD1E38D3F6E}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{41D94694-6F7D-C786-C195-B77898E3B6BD}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
@@ -919,34 +919,6 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Image Id="5" AddrType="1" ImageType="1">
 					<Name>Image</Name>
 				</Image>
-				<Box Id="9" BoxType="4001">
-					<Name>Box 9 (BK8100)</Name>
-					<ImageId>5</ImageId>
-					<Vars VarGrpType="1">
-						<Name>Inputs</Name>
-						<Var>
-							<Name>State</Name>
-							<Comment><![CDATA[0x00 = No error
-0x01 = Klemmenbus error
-0x02 = Configuration error
-0x10 = Output size invalid
-0x20 = Input size invalid
-0x40 = Input data invalid
-0x80 = Box not exists]]></Comment>
-							<Type>BITARR8</Type>
-						</Var>
-					</Vars>
-					<Vars VarGrpType="2">
-						<Name>Outputs</Name>
-					</Vars>
-					<BusCoupler ComplexTermSupport="true">
-						<Term Id="1" TermType="#x2332" Fieldbus="3">
-							<Name>End Term (KL9010)</Name>
-							<ImageId>32</ImageId>
-						</Term>
-					</BusCoupler>
-					<Serial MultiPoint="1"/>
-				</Box>
 				<Serial Baud="9600" StopBit="1" RsType="1" UPSDisableSysShutdown="true" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" FifoSize="16" Timeout="300"/>
 			</Device>
 			<Device Id="5" DevType="11" AmsPort="28677">
