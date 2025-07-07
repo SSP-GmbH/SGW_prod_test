@@ -5,8 +5,12 @@
 
 {attribute 'qualified_only'}
 VAR_GLOBAL
-    DO_EL2008_0 AT %Q* : BOOL;   // EL2008 channel 1
-    DO_EL2008_1 AT %Q* : BOOL;   // EL2008 channel 2
+    DO_EL2008_0    AT %Q* : BOOL;   // EL2008 channel 1
+    DO_EL2008_1    AT %Q* : BOOL;   // EL2008 channel 2
+
+  	// — these must sit on WORD I/O addresses, not bit addresses —  
+  	PCin  AT %IW0 : PcComInData;     // Input image, 2-byte SerStatus + D[64]
+ 	PCout AT %QW0 : PcComOutData;    // Output image, 2-byte SerCtrl + D[64]
 END_VAR
 ]]></Declaration>
   </GVL>

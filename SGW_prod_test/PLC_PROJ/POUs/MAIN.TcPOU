@@ -1,52 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
   <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM MAIN
+    <Declaration><![CDATA[(* POUs/MAIN (upper part) *)
+
+PROGRAM MAIN
 VAR
-    (* LED logic *)
-    blink   : BOOL := FALSE;
-    t1      : TON  := (PT := T#1S);
+  // ─── 1 Hz square-wave state ───────────────────────────────
+  tonOn  : TON := (PT := T#1S);
+  tonOff : TON := (PT := T#1S);
+  blink  : BOOL := FALSE;
 
-    (* TF6340 helpers *)
-    TxBuf   : Tc2_SerialCom.ComBuffer;
-    RxBuf   : Tc2_SerialCom.ComBuffer;
+  // ─── ComBuffer structs ───────────────────────────────────
+  TxBuf  : ComBuffer;
+  RxBuf  : ComBuffer;
 
-    fbPort  : Tc2_SerialCom.SerialLineControl;           // background task
-    fbSend  : Tc2_SerialCom.SendString;                  // one-shot sender
-    txBusy  : BOOL;                        // fbSend.Busy
-	txString  : STRING(40);
-END_VAR]]></Declaration>
+  // ─── Serial FBs ──────────────────────────────────────────
+  fbPort : SerialLineControl;
+  fbSend : SendString;
+  txBusy : BOOL;
+  txStr  : STRING(40);
+END_VAR
+]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(*  Background handler – runs every cycle  *)
-fbPort(
-    Mode     := SERIALLINEMODE_PC_COM_PORT,
-    TxBuffer := TxBuf,
-    RxBuffer := RxBuf );
-
-(*  1-second toggle + send                    *)
-t1(IN := TRUE);
-
-IF t1.Q AND NOT txBusy THEN
-    blink := NOT blink;                             (* flip LEDs *)
-
-    (* build PSU command with CR/LF terminator *)
-	IF blink THEN
-		txString := 'ABCDEF';   // 15 V
-	ELSE
-		txString := 'AAAAAA';   // 5 V
-	END_IF
-
-    fbSend(                                         (* queue once *)
-        SendString := txString,
-        TxBuffer   := TxBuf,
-        Busy       => txBusy );
-
-    t1(IN := FALSE);                                (* restart TON *)
+      <ST><![CDATA[// 1) One-time ring-buffer init
+IF NOT fbPort.initialized THEN
+  // Tx
+  TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;
+  TxBuf.Count    := 0;  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer);
+  TxBuf.Error    := 0;  TxBuf.blocked  := FALSE;
+  // Rx
+  RxBuf.RdIdx    := 0;  RxBuf.WrIdx    := 0;
+  RxBuf.Count    := 0;  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer);
+  RxBuf.Error    := 0;  RxBuf.blocked  := FALSE;
 END_IF
 
-(*  Drive the EL2008s  *)
-GLOBAL_VARS.DO_EL2008_0 :=  blink;
-GLOBAL_VARS.DO_EL2008_1 :=  NOT blink;]]></ST>
+// 2) Keep the on-board UART alive (DEFAULT = BK8xx0 + your Sync-Mode mapping)
+fbPort(
+  Mode       := SERIALLINEMODE_DEFAULT,      // on-board BK8xx0 UART
+  pComIn     := ADR(GLOBAL_VARS.PCin.D),                  // point at the first data byte of the HW image
+  pComOut    := ADR(GLOBAL_VARS.PCout.D),
+  SizeComIn  := SIZEOF(GLOBAL_VARS.PCin.D),               // 64 bytes
+  TxBuffer   := TxBuf,                        // your software ring
+  RxBuffer   := RxBuf
+);
+
+// 3) 1 Hz via two TONs
+tonOn(  IN := NOT blink );
+tonOff( IN :=  blink    );
+
+// 4) OFF→ON: send 15.00 V
+IF NOT blink AND tonOn.Q THEN
+  blink := TRUE;
+  txStr  := 'VSET1:15.00';
+  fbSend(
+    SendString := txStr,
+    TxBuffer   := TxBuf,
+    Busy       => txBusy
+  );
+END_IF
+
+// 5) ON→OFF: send 5.00 V
+IF blink AND tonOff.Q THEN
+  blink := FALSE;
+  txStr  := 'VSET1:5.00';
+  fbSend(
+    SendString := txStr,
+    TxBuffer   := TxBuf,
+    Busy       => txBusy
+  );
+END_IF
+
+// 6) Map your blink into the EL2008s
+GLOBAL_VARS.DO_EL2008_0 := blink;
+GLOBAL_VARS.DO_EL2008_1 := NOT blink;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
