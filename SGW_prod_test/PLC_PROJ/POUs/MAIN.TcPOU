@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
   <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
-    <Declaration><![CDATA[(* POUs/MAIN (upper part) *)
+    <Declaration><![CDATA[(* POUs/MAIN *)
 
 PROGRAM MAIN
 VAR
@@ -13,34 +13,31 @@ VAR
   // ─── ComBuffer structs ───────────────────────────────────
   TxBuf  : ComBuffer;
   RxBuf  : ComBuffer;
-
-  // ─── Serial FBs ──────────────────────────────────────────
   fbPort : SerialLineControl;
   fbSend : SendString;
   txBusy : BOOL;
-  txStr  : STRING(40);
+  txStr  : STRING(64);
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// 1) One-time ring-buffer init
+      <ST><![CDATA[// — one‐time ComBuffer init —
 IF NOT fbPort.initialized THEN
-  // Tx
-  TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;
-  TxBuf.Count    := 0;  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer);
-  TxBuf.Error    := 0;  TxBuf.blocked  := FALSE;
-  // Rx
-  RxBuf.RdIdx    := 0;  RxBuf.WrIdx    := 0;
-  RxBuf.Count    := 0;  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer);
-  RxBuf.Error    := 0;  RxBuf.blocked  := FALSE;
+  TxBuf.RdIdx    := 0; TxBuf.WrIdx    := 0; TxBuf.Count    := 0;
+  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer);
+  TxBuf.Error    := 0; TxBuf.blocked  := FALSE;
+
+  RxBuf.RdIdx    := 0; RxBuf.WrIdx    := 0; RxBuf.Count    := 0;
+  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer);
+  RxBuf.Error    := 0; RxBuf.blocked  := FALSE;
 END_IF
 
-// 2) Keep the on-board UART alive (DEFAULT = BK8xx0 + your Sync-Mode mapping)
+// — call the port FB every scan in PC‐COM‐PORT mode —
 fbPort(
-  Mode       := SERIALLINEMODE_DEFAULT,      // on-board BK8xx0 UART
-  pComIn     := ADR(GLOBAL_VARS.PCin.D),                  // point at the first data byte of the HW image
+  Mode       := SERIALLINEMODE_PC_COM_PORT,
+  pComIn     := ADR(GLOBAL_VARS.PCin .D),
   pComOut    := ADR(GLOBAL_VARS.PCout.D),
-  SizeComIn  := SIZEOF(GLOBAL_VARS.PCin.D),               // 64 bytes
-  TxBuffer   := TxBuf,                        // your software ring
+  SizeComIn  := SIZEOF(GLOBAL_VARS.PCin .D),
+  TxBuffer   := TxBuf,
   RxBuffer   := RxBuf
 );
 
