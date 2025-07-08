@@ -33,12 +33,12 @@ END_IF
 
 // — call the port FB every scan in PC‐COM‐PORT mode —
 fbPort(
-  Mode       := SERIALLINEMODE_PC_COM_PORT,
-  pComIn     := ADR(GLOBAL_VARS.PCin .D),
-  pComOut    := ADR(GLOBAL_VARS.PCout.D),
-  SizeComIn  := SIZEOF(GLOBAL_VARS.PCin .D),
-  TxBuffer   := TxBuf,
-  RxBuffer   := RxBuf
+  Mode      := SERIALLINEMODE_PC_COM_PORT,
+  pComIn    := ADR(GLOBAL_VARS.COM1_InAll),
+  pComOut   := ADR(GLOBAL_VARS.COM1_OutAll),
+  SizeComIn := 64,
+  TxBuffer  := TxBuf,
+  RxBuffer  := RxBuf
 );
 
 // 3) 1 Hz via two TONs
@@ -48,7 +48,7 @@ tonOff( IN :=  blink    );
 // 4) OFF→ON: send 15.00 V
 IF NOT blink AND tonOn.Q THEN
   blink := TRUE;
-  txStr  := 'VSET1:15.00';
+  txStr  := 'AVSET1:15.00';
   fbSend(
     SendString := txStr,
     TxBuffer   := TxBuf,
@@ -59,7 +59,7 @@ END_IF
 // 5) ON→OFF: send 5.00 V
 IF blink AND tonOff.Q THEN
   blink := FALSE;
-  txStr  := 'VSET1:5.00';
+  txStr  := 'BVSET1:5.00';
   fbSend(
     SendString := txStr,
     TxBuffer   := TxBuf,

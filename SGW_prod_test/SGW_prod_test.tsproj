@@ -117,14 +117,14 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C331D07F-CBF9-0251-B9A6-66A00C9B20D7}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{402506C3-A023-0A0A-2C43-C84B11EEAEF4}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>GLOBAL_VARS.PCout</Name>
-							<Comment><![CDATA[ 66‐byte output image = SerCtrl:WORD + D[0..63]  ]]></Comment>
+							<Name>GLOBAL_VARS.COM1_OutAll</Name>
+							<Comment><![CDATA[ the one contiguous image we pass to the FB:]]></Comment>
 							<Type GUID="{675EF7AA-B859-9A65-9CAB-B83BD9AA10F1}" Namespace="Tc2_SerialCom">PcComOutData</Type>
 						</Var>
 						<Var>
@@ -141,11 +141,150 @@
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
 						<Var>
-							<Name>GLOBAL_VARS.PCin</Name>
-							<Comment><![CDATA[ 66‐byte input image = SerStatus:WORD + D[0..63]]]></Comment>
+							<Name>GLOBAL_VARS.COM1_InAll</Name>
 							<Type GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom">PcComInData</Type>
 						</Var>
 					</Vars>
+					<UnrestoredVarLinks ImportTime="2025-07-08T11:27:09">
+						<OwnerA Name="InputDst" Prefix="TIPC^PLC_PROJ^PLC_PROJ Instance" Type="1">
+							<OwnerB Name="TIID^Device 4 (COM Port)">
+								<Link VarA="GLOBAL_VARS.PCin^D[0]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data1" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[10]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data11" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[11]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data12" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[12]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data13" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[13]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data14" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[14]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data15" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[15]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data16" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[16]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data17" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[17]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data18" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[18]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data19" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[19]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data20" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[1]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data2" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[20]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data21" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[21]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data22" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[22]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data23" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[23]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data24" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[24]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data25" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[25]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data26" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[26]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data27" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[27]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data28" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[28]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data29" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[29]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data30" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[2]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data3" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[30]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data31" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[31]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data32" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[32]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data33" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[33]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data34" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[34]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data35" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[35]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data36" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[36]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data37" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[37]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data38" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[38]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data39" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[39]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data40" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[3]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data4" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[40]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data41" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[41]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data42" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[42]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data43" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[43]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data44" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[44]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data45" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[45]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data46" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[46]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data47" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[47]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data48" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[48]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data49" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[49]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data50" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[4]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data5" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[50]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data51" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[51]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data52" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[52]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data53" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[53]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data54" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[54]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data55" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[55]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data56" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[56]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data57" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[57]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data58" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[58]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data59" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[59]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data60" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[5]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data6" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[60]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data61" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[61]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data62" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[62]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data63" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[63]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data64" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[6]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data7" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[7]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data8" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[8]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data9" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^D[9]" TypeA="BYTE" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Inputs^Data10" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCin^SerStatus" TypeA="WORD" InOutA="0" ParentTypeA="PcComInData" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Inputs^Status" RestoreInfo="ANotFound"/>
+							</OwnerB>
+						</OwnerA>
+						<OwnerA Name="OutputSrc" Prefix="TIPC^PLC_PROJ^PLC_PROJ Instance" Type="2">
+							<OwnerB Name="TIID^Device 4 (COM Port)">
+								<Link VarA="GLOBAL_VARS.PCout^D[0]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data1" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[10]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data11" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[11]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data12" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[12]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data13" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[13]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data14" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[14]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data15" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[15]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data16" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[16]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data17" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[17]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data18" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[18]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data19" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[19]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data20" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[1]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data2" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[20]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data21" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[21]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data22" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[22]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data23" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[23]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data24" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[24]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data25" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[25]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data26" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[26]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data27" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[27]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data28" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[28]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data29" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[29]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data30" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[2]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data3" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[30]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data31" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[31]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data32" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[32]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data33" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[33]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data34" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[34]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data35" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[35]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data36" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[36]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data37" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[37]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data38" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[38]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data39" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[39]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data40" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[3]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data4" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[40]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data41" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[41]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data42" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[42]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data43" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[43]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data44" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[44]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data45" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[45]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data46" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[46]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data47" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[47]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data48" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[48]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data49" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[49]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data50" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[4]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data5" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[50]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data51" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[51]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data52" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[52]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data53" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[53]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data54" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[54]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data55" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[55]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data56" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[56]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data57" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[57]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data58" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[58]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data59" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[59]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data60" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[5]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data6" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[60]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data61" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[61]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data62" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[62]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data63" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[63]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data64" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[6]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data7" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[7]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data8" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[8]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data9" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^D[9]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data10" RestoreInfo="ANotFound"/>
+								<Link VarA="GLOBAL_VARS.PCout^SerCtrl" TypeA="WORD" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Outputs^Ctrl" RestoreInfo="ANotFound"/>
+							</OwnerB>
+						</OwnerA>
+					</UnrestoredVarLinks>
 					<Contexts>
 						<Context>
 							<Id>0</Id>
@@ -1033,136 +1172,136 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_1" VarB="Channel 3^Output"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 4 (COM Port)">
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[0]" VarB="Inputs^Data1"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[10]" VarB="Inputs^Data11"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[11]" VarB="Inputs^Data12"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[12]" VarB="Inputs^Data13"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[13]" VarB="Inputs^Data14"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[14]" VarB="Inputs^Data15"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[15]" VarB="Inputs^Data16"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[16]" VarB="Inputs^Data17"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[17]" VarB="Inputs^Data18"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[18]" VarB="Inputs^Data19"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[19]" VarB="Inputs^Data20"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[1]" VarB="Inputs^Data2"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[20]" VarB="Inputs^Data21"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[21]" VarB="Inputs^Data22"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[22]" VarB="Inputs^Data23"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[23]" VarB="Inputs^Data24"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[24]" VarB="Inputs^Data25"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[25]" VarB="Inputs^Data26"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[26]" VarB="Inputs^Data27"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[27]" VarB="Inputs^Data28"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[28]" VarB="Inputs^Data29"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[29]" VarB="Inputs^Data30"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[2]" VarB="Inputs^Data3"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[30]" VarB="Inputs^Data31"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[31]" VarB="Inputs^Data32"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[32]" VarB="Inputs^Data33"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[33]" VarB="Inputs^Data34"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[34]" VarB="Inputs^Data35"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[35]" VarB="Inputs^Data36"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[36]" VarB="Inputs^Data37"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[37]" VarB="Inputs^Data38"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[38]" VarB="Inputs^Data39"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[39]" VarB="Inputs^Data40"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[3]" VarB="Inputs^Data4"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[40]" VarB="Inputs^Data41"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[41]" VarB="Inputs^Data42"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[42]" VarB="Inputs^Data43"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[43]" VarB="Inputs^Data44"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[44]" VarB="Inputs^Data45"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[45]" VarB="Inputs^Data46"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[46]" VarB="Inputs^Data47"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[47]" VarB="Inputs^Data48"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[48]" VarB="Inputs^Data49"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[49]" VarB="Inputs^Data50"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[4]" VarB="Inputs^Data5"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[50]" VarB="Inputs^Data51"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[51]" VarB="Inputs^Data52"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[52]" VarB="Inputs^Data53"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[53]" VarB="Inputs^Data54"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[54]" VarB="Inputs^Data55"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[55]" VarB="Inputs^Data56"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[56]" VarB="Inputs^Data57"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[57]" VarB="Inputs^Data58"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[58]" VarB="Inputs^Data59"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[59]" VarB="Inputs^Data60"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[5]" VarB="Inputs^Data6"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[60]" VarB="Inputs^Data61"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[61]" VarB="Inputs^Data62"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[62]" VarB="Inputs^Data63"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[63]" VarB="Inputs^Data64"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[6]" VarB="Inputs^Data7"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[7]" VarB="Inputs^Data8"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[8]" VarB="Inputs^Data9"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^D[9]" VarB="Inputs^Data10"/>
-				<Link VarA="PlcTask Inputs^GLOBAL_VARS.PCin^SerStatus" VarB="Inputs^Status"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[0]" VarB="Outputs^Data1"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[10]" VarB="Outputs^Data11"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[11]" VarB="Outputs^Data12"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[12]" VarB="Outputs^Data13"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[13]" VarB="Outputs^Data14"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[14]" VarB="Outputs^Data15"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[15]" VarB="Outputs^Data16"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[16]" VarB="Outputs^Data17"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[17]" VarB="Outputs^Data18"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[18]" VarB="Outputs^Data19"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[19]" VarB="Outputs^Data20"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[1]" VarB="Outputs^Data2"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[20]" VarB="Outputs^Data21"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[21]" VarB="Outputs^Data22"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[22]" VarB="Outputs^Data23"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[23]" VarB="Outputs^Data24"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[24]" VarB="Outputs^Data25"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[25]" VarB="Outputs^Data26"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[26]" VarB="Outputs^Data27"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[27]" VarB="Outputs^Data28"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[28]" VarB="Outputs^Data29"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[29]" VarB="Outputs^Data30"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[2]" VarB="Outputs^Data3"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[30]" VarB="Outputs^Data31"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[31]" VarB="Outputs^Data32"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[32]" VarB="Outputs^Data33"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[33]" VarB="Outputs^Data34"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[34]" VarB="Outputs^Data35"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[35]" VarB="Outputs^Data36"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[36]" VarB="Outputs^Data37"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[37]" VarB="Outputs^Data38"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[38]" VarB="Outputs^Data39"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[39]" VarB="Outputs^Data40"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[3]" VarB="Outputs^Data4"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[40]" VarB="Outputs^Data41"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[41]" VarB="Outputs^Data42"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[42]" VarB="Outputs^Data43"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[43]" VarB="Outputs^Data44"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[44]" VarB="Outputs^Data45"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[45]" VarB="Outputs^Data46"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[46]" VarB="Outputs^Data47"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[47]" VarB="Outputs^Data48"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[48]" VarB="Outputs^Data49"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[49]" VarB="Outputs^Data50"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[4]" VarB="Outputs^Data5"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[50]" VarB="Outputs^Data51"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[51]" VarB="Outputs^Data52"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[52]" VarB="Outputs^Data53"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[53]" VarB="Outputs^Data54"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[54]" VarB="Outputs^Data55"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[55]" VarB="Outputs^Data56"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[56]" VarB="Outputs^Data57"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[57]" VarB="Outputs^Data58"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[58]" VarB="Outputs^Data59"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[59]" VarB="Outputs^Data60"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[5]" VarB="Outputs^Data6"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[60]" VarB="Outputs^Data61"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[61]" VarB="Outputs^Data62"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[62]" VarB="Outputs^Data63"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[63]" VarB="Outputs^Data64"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[6]" VarB="Outputs^Data7"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[7]" VarB="Outputs^Data8"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[8]" VarB="Outputs^Data9"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^D[9]" VarB="Outputs^Data10"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.PCout^SerCtrl" VarB="Outputs^Ctrl"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[0]" VarB="Inputs^Data1"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[10]" VarB="Inputs^Data11"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[11]" VarB="Inputs^Data12"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[12]" VarB="Inputs^Data13"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[13]" VarB="Inputs^Data14"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[14]" VarB="Inputs^Data15"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[15]" VarB="Inputs^Data16"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[16]" VarB="Inputs^Data17"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[17]" VarB="Inputs^Data18"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[18]" VarB="Inputs^Data19"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[19]" VarB="Inputs^Data20"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[1]" VarB="Inputs^Data2"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[20]" VarB="Inputs^Data21"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[21]" VarB="Inputs^Data22"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[22]" VarB="Inputs^Data23"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[23]" VarB="Inputs^Data24"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[24]" VarB="Inputs^Data25"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[25]" VarB="Inputs^Data26"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[26]" VarB="Inputs^Data27"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[27]" VarB="Inputs^Data28"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[28]" VarB="Inputs^Data29"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[29]" VarB="Inputs^Data30"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[2]" VarB="Inputs^Data3"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[30]" VarB="Inputs^Data31"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[31]" VarB="Inputs^Data32"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[32]" VarB="Inputs^Data33"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[33]" VarB="Inputs^Data34"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[34]" VarB="Inputs^Data35"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[35]" VarB="Inputs^Data36"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[36]" VarB="Inputs^Data37"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[37]" VarB="Inputs^Data38"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[38]" VarB="Inputs^Data39"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[39]" VarB="Inputs^Data40"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[3]" VarB="Inputs^Data4"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[40]" VarB="Inputs^Data41"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[41]" VarB="Inputs^Data42"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[42]" VarB="Inputs^Data43"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[43]" VarB="Inputs^Data44"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[44]" VarB="Inputs^Data45"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[45]" VarB="Inputs^Data46"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[46]" VarB="Inputs^Data47"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[47]" VarB="Inputs^Data48"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[48]" VarB="Inputs^Data49"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[49]" VarB="Inputs^Data50"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[4]" VarB="Inputs^Data5"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[50]" VarB="Inputs^Data51"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[51]" VarB="Inputs^Data52"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[52]" VarB="Inputs^Data53"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[53]" VarB="Inputs^Data54"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[54]" VarB="Inputs^Data55"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[55]" VarB="Inputs^Data56"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[56]" VarB="Inputs^Data57"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[57]" VarB="Inputs^Data58"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[58]" VarB="Inputs^Data59"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[59]" VarB="Inputs^Data60"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[5]" VarB="Inputs^Data6"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[60]" VarB="Inputs^Data61"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[61]" VarB="Inputs^Data62"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[62]" VarB="Inputs^Data63"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[63]" VarB="Inputs^Data64"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[6]" VarB="Inputs^Data7"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[7]" VarB="Inputs^Data8"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[8]" VarB="Inputs^Data9"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^D[9]" VarB="Inputs^Data10"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.COM1_InAll^SerStatus" VarB="Inputs^Status"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[0]" VarB="Outputs^Data1"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[10]" VarB="Outputs^Data11"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[11]" VarB="Outputs^Data12"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[12]" VarB="Outputs^Data13"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[13]" VarB="Outputs^Data14"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[14]" VarB="Outputs^Data15"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[15]" VarB="Outputs^Data16"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[16]" VarB="Outputs^Data17"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[17]" VarB="Outputs^Data18"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[18]" VarB="Outputs^Data19"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[19]" VarB="Outputs^Data20"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[1]" VarB="Outputs^Data2"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[20]" VarB="Outputs^Data21"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[21]" VarB="Outputs^Data22"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[22]" VarB="Outputs^Data23"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[23]" VarB="Outputs^Data24"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[24]" VarB="Outputs^Data25"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[25]" VarB="Outputs^Data26"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[26]" VarB="Outputs^Data27"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[27]" VarB="Outputs^Data28"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[28]" VarB="Outputs^Data29"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[29]" VarB="Outputs^Data30"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[2]" VarB="Outputs^Data3"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[30]" VarB="Outputs^Data31"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[31]" VarB="Outputs^Data32"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[32]" VarB="Outputs^Data33"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[33]" VarB="Outputs^Data34"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[34]" VarB="Outputs^Data35"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[35]" VarB="Outputs^Data36"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[36]" VarB="Outputs^Data37"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[37]" VarB="Outputs^Data38"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[38]" VarB="Outputs^Data39"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[39]" VarB="Outputs^Data40"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[3]" VarB="Outputs^Data4"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[40]" VarB="Outputs^Data41"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[41]" VarB="Outputs^Data42"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[42]" VarB="Outputs^Data43"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[43]" VarB="Outputs^Data44"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[44]" VarB="Outputs^Data45"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[45]" VarB="Outputs^Data46"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[46]" VarB="Outputs^Data47"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[47]" VarB="Outputs^Data48"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[48]" VarB="Outputs^Data49"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[49]" VarB="Outputs^Data50"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[4]" VarB="Outputs^Data5"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[50]" VarB="Outputs^Data51"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[51]" VarB="Outputs^Data52"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[52]" VarB="Outputs^Data53"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[53]" VarB="Outputs^Data54"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[54]" VarB="Outputs^Data55"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[55]" VarB="Outputs^Data56"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[56]" VarB="Outputs^Data57"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[57]" VarB="Outputs^Data58"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[58]" VarB="Outputs^Data59"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[59]" VarB="Outputs^Data60"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[5]" VarB="Outputs^Data6"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[60]" VarB="Outputs^Data61"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[61]" VarB="Outputs^Data62"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[62]" VarB="Outputs^Data63"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[63]" VarB="Outputs^Data64"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[6]" VarB="Outputs^Data7"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[7]" VarB="Outputs^Data8"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[8]" VarB="Outputs^Data9"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^D[9]" VarB="Outputs^Data10"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.COM1_OutAll^SerCtrl" VarB="Outputs^Ctrl"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>

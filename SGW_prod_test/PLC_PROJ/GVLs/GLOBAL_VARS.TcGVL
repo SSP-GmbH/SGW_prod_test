@@ -8,9 +8,15 @@ VAR_GLOBAL
     DO_EL2008_0    AT %Q* : BOOL;   // EL2008 channel 1
     DO_EL2008_1    AT %Q* : BOOL;   // EL2008 channel 2
 
-  	// — these must sit on WORD I/O addresses, not bit addresses —  
-	PCin  AT %IW0 : PcComInData;   // 66‐byte input image = SerStatus:WORD + D[0..63]
-	PCout AT %QW0 : PcComOutData;  // 66‐byte output image = SerCtrl:WORD + D[0..63]  
+	// the one contiguous image we pass to the FB:
+  	COM1_OutAll AT %QW0 : PcComOutData;  
+  	COM1_InAll  AT %IW0 : PcComInData;   
+
+  	// pointer “aliases” for ease of use:
+  	COM1_SerCtrl_p : POINTER TO WORD := ADR(COM1_OutAll.SerCtrl);
+  	COM1_TxData_p  : POINTER TO BYTE := ADR(COM1_OutAll   .D);
+  	COM1_SerStat_p : POINTER TO WORD := ADR(COM1_InAll .SerStatus);
+  	COM1_RxData_p  : POINTER TO BYTE := ADR(COM1_InAll    .D);   
 END_VAR
 ]]></Declaration>
   </GVL>
