@@ -982,7 +982,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Image Id="5" AddrType="1" ImageType="3">
 					<Name>Image</Name>
 				</Image>
-				<Serial Baud="9600" StopBit="1" RsType="1" UPSDisableSysShutdown="true" WaitTimeToShutdown="60" BufSize="4096" DataBit="8" SyncMode="true" FifoSize="16" Timeout="300"/>
+				<Serial Baud="9600" StopBit="1" RsType="1" UPSDisableSysShutdown="true" WaitTimeToShutdown="60" DataSize="64" BufSize="4096" DataBit="8" SyncMode="true" FifoSize="16" Timeout="300"/>
 			</Device>
 			<Device Id="5" DevType="11" AmsPort="28677">
 				<Name>Device 5 (COM Port)</Name>
