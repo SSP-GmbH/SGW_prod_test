@@ -4,34 +4,45 @@
     <Declaration><![CDATA[(* POUs/MAIN *)
 
 PROGRAM MAIN
+
 VAR
-  // your serial machinery
-  TxBuf    : ComBuffer;
-  RxBuf    : ComBuffer;
-  fbPort   : SerialLineControl;
-  fbSend   : SendString;
-  txBusy   : BOOL;
+  // COMM machinery
+  TxBuf      : ComBuffer;
+  RxBuf      : ComBuffer;
+  fbPort     : SerialLineControl;
+  fbSend     : SendString;
+  txBusy     : BOOL;
 
-  // ramp parameters
-  STEP_DELAY  : TIME := T#100MS;   // time between voltage‐steps
-  HOLD_TIME   : TIME := T#1S;      // dwell at ends
-  VOLT_MIN    : INT  := 1;         // lowest V
-  VOLT_MAX    : INT  := 20;        // highest V
+  // — user-selectable resolution —  
+  UseFineSteps : BOOL := FALSE;    // TRUE = 0.01 V, FALSE = 1 V  
 
-  // state
-  state       : RAMP_STATES := RAMP_UP;
-  currentVolt : INT          := VOLT_MIN;
+  // ramp configuration (hundredths of volts)  
+  VOLT_MIN_H    : INT := 0;       // 0.00 V  
+  VOLT_MAX_H    : INT := 2000;    // 20.00 V  
 
-  // two timers
-  stepTimer   : TON := (PT := STEP_DELAY);
-  holdTimer   : TON := (PT := HOLD_TIME);
+  // dynamic parameters derived from UseFineSteps  
+  stepInc       : INT;            // how many “hundredths” per step  
+  stepDelay     : TIME;           // timer PT  
 
-  // send string
-  txStr       : STRING(80);
+  HOLD_TIME     : TIME := T#1S;   // dwell at ends  
+
+  // state  
+  state         : RAMP_STATES := RAMP_UP;  
+  curHund       : INT := VOLT_MIN_H;  
+
+  // timers  
+  stepTimer     : TON;  
+  holdTimer     : TON := (PT := HOLD_TIME);  
+
+  // build string  
+  txStr         : STRING(20);  
+  hiPart, loPart: INT;  
+  loStr, hiStr  : STRING(3);  
 END_VAR
+
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// — initialize buffers once —
+      <ST><![CDATA[// — init COM buffers once —
 IF NOT fbPort.initialized THEN
   TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;  TxBuf.Count    := 0;
   TxBuf.FreeByte := SIZEOF(TxBuf.Buffer); TxBuf.Error := 0; TxBuf.blocked := FALSE;
@@ -40,79 +51,80 @@ IF NOT fbPort.initialized THEN
   RxBuf.FreeByte := SIZEOF(RxBuf.Buffer); RxBuf.Error := 0; RxBuf.blocked := FALSE;
 END_IF
 
-// — always drive the COM port FB —
-fbPort(
-  Mode      := SERIALLINEMODE_DEFAULT,
-  pComIn    := ADR(GLOBAL_VARS.X003_In),
-  pComOut   := ADR(GLOBAL_VARS.X003_Out),
-  SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),
-  TxBuffer  := TxBuf,
-  RxBuffer  := RxBuf
+// — derive stepInc & stepDelay each scan —  
+IF UseFineSteps THEN  
+  stepInc   := 1;      // 0.01 V  
+  stepTimer(PT := T#10MS);    // 0.01 V every 10 ms 
+ELSE  
+  stepInc   := 100;    // 1 V  
+  stepTimer(PT := T#10MS);    // 1 V every 10 ms (fast)  
+END_IF;
+
+// — always drive the serial FB —  
+fbPort(  
+  Mode      := SERIALLINEMODE_DEFAULT,  
+  pComIn    := ADR(GLOBAL_VARS.X003_In),  
+  pComOut   := ADR(GLOBAL_VARS.X003_Out),  
+  SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),  
+  TxBuffer  := TxBuf,  
+  RxBuffer  := RxBuf  
 );
 
-// — step‐timer always running —  
-stepTimer(IN := TRUE);
+// only run stepTimer in ramp states  
+stepTimer(IN := (state = RAMP_UP) OR (state = RAMP_DOWN));
 
-IF stepTimer.Q THEN
-  // reset the step timer
-  stepTimer(IN := FALSE);
-  // advance or retract voltage
-  CASE state OF
-    RAMP_UP:
-      IF currentVolt < VOLT_MAX THEN
-        currentVolt := currentVolt + 1;
-      ELSE
-        // reached top → enter hold
-        state := HOLD_HIGH;
-        holdTimer(IN := TRUE);  // start the 1 s hold
-      END_IF
+// on each stepTimer.Q, advance by stepInc  
+IF stepTimer.Q THEN  
+  // reset  
+  stepTimer(IN := FALSE);  
 
-    RAMP_DOWN:
-      IF currentVolt > VOLT_MIN THEN
-        currentVolt := currentVolt - 1;
-      ELSE
-        // reached bottom → enter hold
-        state := HOLD_LOW;
-        holdTimer(IN := TRUE);
-      END_IF
-  END_CASE
+  // advance/retract  
+  CASE state OF  
+    RAMP_UP:  
+      IF curHund + stepInc <= VOLT_MAX_H THEN  
+        curHund := curHund + stepInc;  
+      ELSE  
+        curHund := VOLT_MAX_H;  
+        state   := HOLD_HIGH;  
+      END_IF;  
 
-  // whenever we actually moved (or hit an end), send the new setpoint
-  // build string “VSET1:xx.00”
-  txStr := CONCAT(
-             'VSET1:',
-             CONCAT(
-               INT_TO_STRING(currentVolt),
-               '.00'
-             )
-           );
-  fbSend(
-    SendString := txStr,
-    TxBuffer   := TxBuf,
-    Busy       => txBusy
-  );
-END_IF
+    RAMP_DOWN:  
+      IF curHund - stepInc >= VOLT_MIN_H THEN  
+        curHund := curHund - stepInc;  
+      ELSE  
+        curHund := VOLT_MIN_H;  
+        state   := HOLD_LOW;  
+      END_IF;  
+  END_CASE;  
 
-// — hold‐timer only active in HOLD_HIGH or HOLD_LOW —  
-holdTimer(
-  IN := (state = HOLD_HIGH) OR (state = HOLD_LOW)
-);
+  // build “VSET1:xx.yy”  
+  hiPart := curHund / 100;         // integral volts  
+  loPart := curHund MOD 100;       // hundredths  
+  loStr  := INT_TO_STRING(loPart);  
+  IF loPart < 10 THEN  
+    loStr := CONCAT('0', loStr);  
+  END_IF;  
+  hiStr  := INT_TO_STRING(hiPart);  
 
-IF holdTimer.Q THEN
-  // reset hold
-  holdTimer(IN := FALSE);
+  txStr := CONCAT('VSET1:', CONCAT(hiStr, CONCAT('.', loStr)));  
+  fbSend(SendString := txStr, TxBuffer := TxBuf, Busy => txBusy);  
+END_IF;
 
-  // transition to next ramp direction
-  IF state = HOLD_HIGH THEN
-    state := RAMP_DOWN;
-  ELSIF state = HOLD_LOW THEN
-    state := RAMP_UP;
-  END_IF
-END_IF
+// handles the 1 s holds  
+holdTimer(IN := (state = HOLD_HIGH) OR (state = HOLD_LOW));  
+IF holdTimer.Q THEN  
+  holdTimer(IN := FALSE);  
+  IF state = HOLD_HIGH THEN  
+    state := RAMP_DOWN;  
+  ELSIF state = HOLD_LOW THEN  
+    state := RAMP_UP;  
+  END_IF;  
+END_IF;
 
-// — (optional) map to your EL2008 outputs if you like —  
+// optional outputs  
 GLOBAL_VARS.DO_EL2008_0 := (state = RAMP_UP) OR (state = RAMP_DOWN);
-GLOBAL_VARS.DO_EL2008_1 := NOT GLOBAL_VARS.DO_EL2008_0;]]></ST>
+GLOBAL_VARS.DO_EL2008_1 := NOT GLOBAL_VARS.DO_EL2008_0;
+]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
