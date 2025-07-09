@@ -5,38 +5,42 @@
 
 PROGRAM MAIN
 VAR
-  // blink 1 Hz
-  tonOn  : TON := (PT:=T#1S);
-  tonOff : TON := (PT:=T#1S);
-  blink  : BOOL := FALSE;
-
-  // serial buffers & FBs
+  // your serial machinery
   TxBuf    : ComBuffer;
   RxBuf    : ComBuffer;
   fbPort   : SerialLineControl;
   fbSend   : SendString;
   txBusy   : BOOL;
-  txStr    : STRING(80);
 
-  // our own “did-we-init-already” flag
-  initDone : BOOL := FALSE;
-  
-  fbConfig : KL6Configuration;
+  // ramp parameters
+  STEP_DELAY  : TIME := T#100MS;   // time between voltage‐steps
+  HOLD_TIME   : TIME := T#1S;      // dwell at ends
+  VOLT_MIN    : INT  := 1;         // lowest V
+  VOLT_MAX    : INT  := 20;        // highest V
+
+  // state
+  state       : RAMP_STATES := RAMP_UP;
+  currentVolt : INT          := VOLT_MIN;
+
+  // two timers
+  stepTimer   : TON := (PT := STEP_DELAY);
+  holdTimer   : TON := (PT := HOLD_TIME);
+
+  // send string
+  txStr       : STRING(80);
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// — one‐time ComBuffer init —
+      <ST><![CDATA[// — initialize buffers once —
 IF NOT fbPort.initialized THEN
-  TxBuf.RdIdx    := 0; TxBuf.WrIdx    := 0; TxBuf.Count    := 0;
-  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer);
-  TxBuf.Error    := 0; TxBuf.blocked  := FALSE;
+  TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;  TxBuf.Count    := 0;
+  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer); TxBuf.Error := 0; TxBuf.blocked := FALSE;
 
-  RxBuf.RdIdx    := 0; RxBuf.WrIdx    := 0; RxBuf.Count    := 0;
-  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer);
-  RxBuf.Error    := 0; RxBuf.blocked  := FALSE;
+  RxBuf.RdIdx    := 0;  RxBuf.WrIdx    := 0;  RxBuf.Count    := 0;
+  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer); RxBuf.Error := 0; RxBuf.blocked := FALSE;
 END_IF
 
-// — call the port FB every scan in PC‐COM‐PORT mode —
+// — always drive the COM port FB —
 fbPort(
   Mode      := SERIALLINEMODE_DEFAULT,
   pComIn    := ADR(GLOBAL_VARS.X003_In),
@@ -46,14 +50,42 @@ fbPort(
   RxBuffer  := RxBuf
 );
 
-// 3) 1 Hz via two TONs
-tonOn(  IN := NOT blink );
-tonOff( IN :=  blink    );
+// — step‐timer always running —  
+stepTimer(IN := TRUE);
 
-// 4) OFF→ON: send 15.00 V
-IF NOT blink AND tonOn.Q THEN
-  blink := TRUE;
-  txStr  := 'VSET1:15.00';
+IF stepTimer.Q THEN
+  // reset the step timer
+  stepTimer(IN := FALSE);
+  // advance or retract voltage
+  CASE state OF
+    RAMP_UP:
+      IF currentVolt < VOLT_MAX THEN
+        currentVolt := currentVolt + 1;
+      ELSE
+        // reached top → enter hold
+        state := HOLD_HIGH;
+        holdTimer(IN := TRUE);  // start the 1 s hold
+      END_IF
+
+    RAMP_DOWN:
+      IF currentVolt > VOLT_MIN THEN
+        currentVolt := currentVolt - 1;
+      ELSE
+        // reached bottom → enter hold
+        state := HOLD_LOW;
+        holdTimer(IN := TRUE);
+      END_IF
+  END_CASE
+
+  // whenever we actually moved (or hit an end), send the new setpoint
+  // build string “VSET1:xx.00”
+  txStr := CONCAT(
+             'VSET1:',
+             CONCAT(
+               INT_TO_STRING(currentVolt),
+               '.00'
+             )
+           );
   fbSend(
     SendString := txStr,
     TxBuffer   := TxBuf,
@@ -61,20 +93,26 @@ IF NOT blink AND tonOn.Q THEN
   );
 END_IF
 
-// 5) ON→OFF: send 5.00 V
-IF blink AND tonOff.Q THEN
-  blink := FALSE;
-  txStr  := 'VSET1:5.00';
-  fbSend(
-    SendString := txStr,
-    TxBuffer   := TxBuf,
-    Busy       => txBusy
-  );
+// — hold‐timer only active in HOLD_HIGH or HOLD_LOW —  
+holdTimer(
+  IN := (state = HOLD_HIGH) OR (state = HOLD_LOW)
+);
+
+IF holdTimer.Q THEN
+  // reset hold
+  holdTimer(IN := FALSE);
+
+  // transition to next ramp direction
+  IF state = HOLD_HIGH THEN
+    state := RAMP_DOWN;
+  ELSIF state = HOLD_LOW THEN
+    state := RAMP_UP;
+  END_IF
 END_IF
 
-// 6) Map your blink into the EL2008s
-GLOBAL_VARS.DO_EL2008_0 := blink;
-GLOBAL_VARS.DO_EL2008_1 := NOT blink;]]></ST>
+// — (optional) map to your EL2008 outputs if you like —  
+GLOBAL_VARS.DO_EL2008_0 := (state = RAMP_UP) OR (state = RAMP_DOWN);
+GLOBAL_VARS.DO_EL2008_1 := NOT GLOBAL_VARS.DO_EL2008_0;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

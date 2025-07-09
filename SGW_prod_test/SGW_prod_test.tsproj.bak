@@ -114,10 +114,13 @@
 					<Name>PlcTask</Name>
 				</Task>
 			</Tasks>
+			<TypeSystem>
+				<AdditionalTmcFile Name="RampTypes.TcDECL" File="RampTypes.TcDECL.tmc"/>
+			</TypeSystem>
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{E68AFAAE-E499-61B0-8F3A-108B5091774D}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{5876281E-85D0-B0E5-5811-04632C9F3E76}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
