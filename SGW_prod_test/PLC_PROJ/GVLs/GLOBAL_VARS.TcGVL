@@ -5,8 +5,14 @@
 
 {attribute 'qualified_only'}
 VAR_GLOBAL
-    DO_EL2008_0    AT %Q* : BOOL;   // EL2008 channel 1
-    DO_EL2008_1    AT %Q* : BOOL;   // EL2008 channel 2
+    DO_EL2008_RELAY_0    AT %Q* : BOOL;   // EL2008 channel 1
+    DO_EL2008_RELAY_1    AT %Q* : BOOL;   // EL2008 channel 3
+	DO_EL2008_OUT_2      AT %Q* : BOOL;   // EL2008 channel 2
+	DO_EL2008_OUT_4      AT %Q* : BOOL;   // EL2008 channel 4
+	DO_EL2008_OUT_5      AT %Q* : BOOL;   // EL2008 channel 5
+	DO_EL2008_OUT_6      AT %Q* : BOOL;   // EL2008 channel 6
+	DO_EL2008_OUT_7      AT %Q* : BOOL;   // EL2008 channel 7
+	DO_EL2008_OUT_8      AT %Q* : BOOL;   // EL2008 channel 8
 
   	X003_Out       AT %Q* : PcComOutData;
   	X003_In        AT %I* : PcComInData;

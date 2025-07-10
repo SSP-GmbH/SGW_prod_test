@@ -120,19 +120,49 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{F586C6E6-51E0-9705-2670-D7DE12718874}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C237034C-78F8-AFA0-7BEA-377027DA7589}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>GLOBAL_VARS.DO_EL2008_0</Name>
+							<Name>GLOBAL_VARS.DO_EL2008_RELAY_0</Name>
 							<Comment><![CDATA[ EL2008 channel 1]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GLOBAL_VARS.DO_EL2008_1</Name>
+							<Name>GLOBAL_VARS.DO_EL2008_RELAY_1</Name>
+							<Comment><![CDATA[ EL2008 channel 3]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_2</Name>
 							<Comment><![CDATA[ EL2008 channel 2]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_4</Name>
+							<Comment><![CDATA[ EL2008 channel 4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_5</Name>
+							<Comment><![CDATA[ EL2008 channel 5]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_6</Name>
+							<Comment><![CDATA[ EL2008 channel 6]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_7</Name>
+							<Comment><![CDATA[ EL2008 channel 7]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.DO_EL2008_OUT_8</Name>
+							<Comment><![CDATA[ EL2008 channel 8]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1170,18 +1200,135 @@ Bit1: Value smaller than Limit2]]></Comment>
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500850000403}" Id="#x02030020"/>
 		<OwnerA Name="TIPC^PLC_PROJ^PLC_PROJ Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL2008)">
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_0" VarB="Channel 1^Output"/>
-				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_1" VarB="Channel 3^Output"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_RELAY_0" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_RELAY_1" VarB="Channel 3^Output"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 4 (COM Port)">
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[0]" VarB="Inputs^Data1"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[10]" VarB="Inputs^Data11"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[11]" VarB="Inputs^Data12"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[12]" VarB="Inputs^Data13"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[13]" VarB="Inputs^Data14"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[14]" VarB="Inputs^Data15"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[15]" VarB="Inputs^Data16"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[16]" VarB="Inputs^Data17"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[17]" VarB="Inputs^Data18"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[18]" VarB="Inputs^Data19"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[19]" VarB="Inputs^Data20"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[1]" VarB="Inputs^Data2"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[20]" VarB="Inputs^Data21"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[21]" VarB="Inputs^Data22"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[22]" VarB="Inputs^Data23"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[23]" VarB="Inputs^Data24"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[24]" VarB="Inputs^Data25"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[25]" VarB="Inputs^Data26"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[26]" VarB="Inputs^Data27"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[27]" VarB="Inputs^Data28"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[28]" VarB="Inputs^Data29"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[29]" VarB="Inputs^Data30"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[2]" VarB="Inputs^Data3"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[30]" VarB="Inputs^Data31"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[31]" VarB="Inputs^Data32"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[32]" VarB="Inputs^Data33"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[33]" VarB="Inputs^Data34"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[34]" VarB="Inputs^Data35"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[35]" VarB="Inputs^Data36"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[36]" VarB="Inputs^Data37"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[37]" VarB="Inputs^Data38"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[38]" VarB="Inputs^Data39"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[39]" VarB="Inputs^Data40"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[3]" VarB="Inputs^Data4"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[40]" VarB="Inputs^Data41"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[41]" VarB="Inputs^Data42"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[42]" VarB="Inputs^Data43"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[43]" VarB="Inputs^Data44"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[44]" VarB="Inputs^Data45"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[45]" VarB="Inputs^Data46"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[46]" VarB="Inputs^Data47"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[47]" VarB="Inputs^Data48"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[48]" VarB="Inputs^Data49"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[49]" VarB="Inputs^Data50"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[4]" VarB="Inputs^Data5"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[50]" VarB="Inputs^Data51"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[51]" VarB="Inputs^Data52"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[52]" VarB="Inputs^Data53"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[53]" VarB="Inputs^Data54"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[54]" VarB="Inputs^Data55"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[55]" VarB="Inputs^Data56"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[56]" VarB="Inputs^Data57"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[57]" VarB="Inputs^Data58"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[58]" VarB="Inputs^Data59"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[59]" VarB="Inputs^Data60"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[5]" VarB="Inputs^Data6"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[60]" VarB="Inputs^Data61"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[61]" VarB="Inputs^Data62"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[62]" VarB="Inputs^Data63"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[63]" VarB="Inputs^Data64"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[6]" VarB="Inputs^Data7"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[7]" VarB="Inputs^Data8"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[8]" VarB="Inputs^Data9"/>
+				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[9]" VarB="Inputs^Data10"/>
 				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^SerStatus" VarB="Inputs^Status"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[0]" VarB="Outputs^Data1"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[10]" VarB="Outputs^Data11"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[11]" VarB="Outputs^Data12"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[12]" VarB="Outputs^Data13"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[13]" VarB="Outputs^Data14"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[14]" VarB="Outputs^Data15"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[15]" VarB="Outputs^Data16"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[16]" VarB="Outputs^Data17"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[17]" VarB="Outputs^Data18"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[18]" VarB="Outputs^Data19"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[19]" VarB="Outputs^Data20"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[1]" VarB="Outputs^Data2"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[20]" VarB="Outputs^Data21"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[21]" VarB="Outputs^Data22"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[22]" VarB="Outputs^Data23"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[23]" VarB="Outputs^Data24"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[24]" VarB="Outputs^Data25"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[25]" VarB="Outputs^Data26"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[26]" VarB="Outputs^Data27"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[27]" VarB="Outputs^Data28"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[28]" VarB="Outputs^Data29"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[29]" VarB="Outputs^Data30"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[2]" VarB="Outputs^Data3"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[30]" VarB="Outputs^Data31"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[31]" VarB="Outputs^Data32"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[32]" VarB="Outputs^Data33"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[33]" VarB="Outputs^Data34"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[34]" VarB="Outputs^Data35"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[35]" VarB="Outputs^Data36"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[36]" VarB="Outputs^Data37"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[37]" VarB="Outputs^Data38"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[38]" VarB="Outputs^Data39"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[39]" VarB="Outputs^Data40"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[3]" VarB="Outputs^Data4"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[40]" VarB="Outputs^Data41"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[41]" VarB="Outputs^Data42"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[42]" VarB="Outputs^Data43"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[43]" VarB="Outputs^Data44"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[44]" VarB="Outputs^Data45"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[45]" VarB="Outputs^Data46"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[46]" VarB="Outputs^Data47"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[47]" VarB="Outputs^Data48"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[48]" VarB="Outputs^Data49"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[49]" VarB="Outputs^Data50"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[4]" VarB="Outputs^Data5"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[50]" VarB="Outputs^Data51"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[51]" VarB="Outputs^Data52"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[52]" VarB="Outputs^Data53"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[53]" VarB="Outputs^Data54"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[54]" VarB="Outputs^Data55"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[55]" VarB="Outputs^Data56"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[56]" VarB="Outputs^Data57"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[57]" VarB="Outputs^Data58"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[58]" VarB="Outputs^Data59"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[59]" VarB="Outputs^Data60"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[5]" VarB="Outputs^Data6"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[60]" VarB="Outputs^Data61"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[61]" VarB="Outputs^Data62"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[62]" VarB="Outputs^Data63"/>
+				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[63]" VarB="Outputs^Data64"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[6]" VarB="Outputs^Data7"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[7]" VarB="Outputs^Data8"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.X003_Out^D[8]" VarB="Outputs^Data9"/>
