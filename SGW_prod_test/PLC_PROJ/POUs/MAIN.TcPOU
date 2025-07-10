@@ -6,44 +6,57 @@
 PROGRAM MAIN
 
 VAR
-  // 1) COM port & send machinery
-  TxBuf      : ComBuffer;
-  RxBuf      : ComBuffer;
-  fbPort     : SerialLineControl;
-  fbSend     : SendString;
-  txBusy     : BOOL;
+    (* ----------------------------------------------------------------
+       1)  Serial infrastructure
+    -----------------------------------------------------------------*)
+    TxBuf   : ComBuffer;                 // ring buffer for transmit
+    RxBuf   : ComBuffer;                 // ring buffer for receive
+    fbPort  : SerialLineControl;         // handles driver ↔ buffers
+    fbSend  : SendString;                // sends one STRING through TxBuf
 
-  // 2) Throttle sends
-  sendTimer  : TON := (PT := T#100MS);
-  canSend    : BOOL;
+    (* ----------------------------------------------------------------
+       2)  Send-cycle timing
+    -----------------------------------------------------------------*)
+    sendTmr : TON := (PT := T#100ms);    // one query per 100 msec
+    canSend : BOOL;                      // goes TRUE when timer elapsed
 
-  // 3) Command
-  queryBase  : STRING(16) := 'VSET1?';
-  txStr      : STRING(20);
+    (* ----------------------------------------------------------------
+       3)  Query to instrument
+    -----------------------------------------------------------------*)
+    queryBase : STRING(16) := 'VSET1?';  // command without LF
+    txStr     : STRING(20);              // command with LF appended
+    txBusy    : BOOL;                    // fbSend busy flag
 
-  // 4) ReceiveString FB & vars
-  fbReceive       : ReceiveString;
-  rxStr           : STRING(80);
-  stringReceived  : BOOL;
-  rxBusy          : BOOL;
-  rxError         : ComError_t;
-  rxTimeout       : BOOL;
-  fbRecvReset     : BOOL := FALSE;
+    (* ----------------------------------------------------------------
+       4)  ReceiveString & helpers
+    -----------------------------------------------------------------*)
+    fbReceive      : ReceiveString;
+    rxStr          : STRING(80);
+    stringRcvd     : BOOL;
+    rxBusy         : BOOL;
+    rxError        : ComError_t;
+    fbRecvReset    : BOOL;               // one-scan reset pulse
+    trigSend       : R_TRIG;             // edge detector for Reset
 
-  // 5) Parsed result
-  measuredVoltage : REAL := 0.0;
+    (* ----------------------------------------------------------------
+       5)  Parsed result
+    -----------------------------------------------------------------*)
+    measuredVoltage : REAL := 0.0;
 
-  // 6) Debounce outputs
-  busyFilter   : TON := (PT := T#100MS);
-  errorFilter  : TON := (PT := T#100MS);
-  busyLong     : BOOL;
-  errorLong    : BOOL;
+    (* ----------------------------------------------------------------
+       6)  Output debouncing
+    -----------------------------------------------------------------*)
+    busyFilt  : TON := (PT := T#100ms);
+    errFilt   : TON := (PT := T#100ms);
+    busyLong  : BOOL;
+    errLong   : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// — init COM buffers once —
-
-//— A) Initialize COM buffers once —  
+      <ST><![CDATA[
+(* ================================================================
+   A)  Initialise the ring buffers once after cold/warm start
+   ================================================================ *)
 IF NOT fbPort.initialized THEN
   TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;  TxBuf.Count    := 0;
   TxBuf.FreeByte := SIZEOF(TxBuf.Buffer); TxBuf.Error := 0; TxBuf.blocked := FALSE;
@@ -53,72 +66,85 @@ IF NOT fbPort.initialized THEN
 END_IF
 
 
-//— B) Always drive the SerialLineControl FB each scan —  
-fbPort(  
-  Mode      := SERIALLINEMODE_DEFAULT,  
-  pComIn    := ADR(GLOBAL_VARS.X003_In),  
-  pComOut   := ADR(GLOBAL_VARS.X003_Out),  
-  SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),  
-  TxBuffer  := TxBuf,  
-  RxBuffer  := RxBuf  
-);  
+(* ================================================================
+   B)  SerialLineControl – MUST be executed every scan
+   ================================================================ *)
+fbPort(
+    Mode      := SERIALLINEMODE_DEFAULT,                   // 8N1, 115 200 Bd …
+    pComIn    := ADR(GLOBAL_VARS.X003_In),                 // process-image in
+    pComOut   := ADR(GLOBAL_VARS.X003_Out),                // process-image out
+    SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),
+    TxBuffer  := TxBuf,
+    RxBuffer  := RxBuf
+);
 
-//— C) Throttle sends via sendTimer —  
-sendTimer(IN := TRUE);              // run the timer :contentReference[oaicite:11]{index=11}  
-canSend := sendTimer.Q;             // TRUE when PT has elapsed  
 
-//— D) If allowed, build command + CR and send —  
-IF canSend THEN  
-  sendTimer(IN := FALSE);           // reset the timer  
+(* ================================================================
+   C)  Send one query once per second
+   ================================================================ *)
+sendTmr(IN := TRUE);                           // run continuously
+canSend := sendTmr.Q;                          // TRUE when 1 s elapsed
 
-  // append ASCII 10 (LF) using CHR(10)
-  txStr := CONCAT(queryBase, CHR(10));  
+IF canSend THEN
+    sendTmr(IN := FALSE);                      // re-arm for next period
 
-  fbSend(                           // send the command :contentReference[oaicite:12]{index=12}  
-    SendString := txStr,  
-    TxBuffer   := TxBuf,  
-    Busy       => txBusy  
-  );  
+    txStr := CONCAT(queryBase, CHR(10));       // add LF = ASCII 10
 
-  // pulse Reset to arm ReceiveString for the incoming reply
-  fbRecvReset := TRUE;  
-END_IF  
+    fbSend(
+        SendString := txStr,
+        TxBuffer   := TxBuf,
+        Busy       => txBusy
+    );
+END_IF
 
-//— E) Clear fbRecvReset once fbReceive goes busy —  
-IF fbReceive.busy THEN  
-  fbRecvReset := FALSE;             // only the rising edge matters :contentReference[oaicite:13]{index=13}  
-END_IF  
 
-//— F) Call ReceiveString to capture everything up to CR —  
-fbReceive(  
-  Prefix         := '',             // no prefix :contentReference[oaicite:14]{index=14}  
-  Suffix         := CHR(10),        // terminate on LF :contentReference[oaicite:15]{index=15}  
-  Timeout        := T#0MS,          // disable timeout when using suffix :contentReference[oaicite:16]{index=16}  
-  Reset          := fbRecvReset,    // start new reception :contentReference[oaicite:17]{index=17}  
-  ReceivedString := rxStr,          // in-out :contentReference[oaicite:18]{index=18}  
-  RXbuffer       := RxBuf,          // in-out :contentReference[oaicite:19]{index=19}  
-  StringReceived => stringReceived, // output :contentReference[oaicite:20]{index=20}  
-  busy           => rxBusy,         // output :contentReference[oaicite:21]{index=21}  
-  Error          => rxError,        // output :contentReference[oaicite:22]{index=22}  
-  RxTimeout      => rxTimeout       // output :contentReference[oaicite:23]{index=23}  
-);  
+(* ================================================================
+   D)  Generate one-cycle pulse for ReceiveString.Reset
+   ================================================================ *)
+trigSend(CLK := canSend);                      // goes TRUE for one scan
+fbRecvReset := trigSend.Q;
 
-//— G) When a full line arrives, parse it —  
-IF stringReceived THEN  
-  // ASCII “xx.yy” → REAL  
-  measuredVoltage := STRING_TO_REAL(rxStr);  
-END_IF;  
 
-//— H) Debounce busy/error for DOs —  
-busyFilter(IN := txBusy);  
-errorFilter(IN := (rxError <> COMERROR_NOERROR));  // any non-zero code is an error  
+(* ================================================================
+   E)  Receive the reply up to the LF
+   ================================================================ *)
+fbReceive(
+    Reset          := fbRecvReset,             // **edge pulse**
+    Suffix         := CHR(10),                 // stop at LF
+    Timeout        := T#0S,                    // no timeout needed
+    RxBuffer       := RxBuf,
+    ReceivedString := rxStr,
+    StringReceived => stringRcvd,
+    busy           => rxBusy,
+    Error          => rxError,
+    RxTimeout      => (* unused when Suffix ≠ '' *) 
+);
 
-busyLong  := busyFilter.Q;  
-errorLong := errorFilter.Q;  
 
-//— I) Drive EL2008 channels from the filtered flags —  
-GLOBAL_VARS.DO_EL2008_RELAY_0 := NOT busyLong;      // high when ready  
-GLOBAL_VARS.DO_EL2008_RELAY_1 := errorLong;         // high when fault  
+(* ================================================================
+   F)  Parse the value when a complete line arrived
+   ================================================================ *)
+IF stringRcvd AND (rxError = COMERROR_NOERROR) THEN
+    measuredVoltage := STRING_TO_REAL(rxStr);  // e.g. "12.34" → 12.34
+END_IF
+
+
+(* ================================================================
+   G)  Debounce indications for EL2008 outputs
+   ================================================================ *)
+busyFilt(IN := txBusy OR rxBusy);              // any comms busy
+errFilt(IN := (rxError <> COMERROR_NOERROR));  // any error code
+
+busyLong := busyFilt.Q;                        // TRUE >100 ms
+errLong  := errFilt.Q;                         // TRUE >100 ms
+
+
+(* ================================================================
+   H)  Drive the digital outputs
+   ================================================================ *)
+GLOBAL_VARS.DO_EL2008_RELAY_0 := NOT busyLong; // high when idle/ready
+GLOBAL_VARS.DO_EL2008_RELAY_1 := errLong;      // high when fault
+GLOBAL_VARS.DO_EL2008_OUT_2   := stringRcvd;   // strobe when data received
 ]]></ST>
     </Implementation>
   </POU>
