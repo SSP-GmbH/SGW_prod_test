@@ -1,150 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
   <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
-    <Declaration><![CDATA[(* POUs/MAIN *)
+    <Declaration><![CDATA[ (* POUs/MAIN *)
 
 PROGRAM MAIN
 
 VAR
-    (* ----------------------------------------------------------------
-       1)  Serial infrastructure
-    -----------------------------------------------------------------*)
-    TxBuf   : ComBuffer;                 // ring buffer for transmit
-    RxBuf   : ComBuffer;                 // ring buffer for receive
-    fbPort  : SerialLineControl;         // handles driver ↔ buffers
-    fbSend  : SendString;                // sends one STRING through TxBuf
+    (*— user settings —*)
+    sDeviceNetId : T_AmsNetId := '5.156.240.208.7.1';      (* leave empty ⇒ local EL6751 *) 
+    bSendOnce    : BOOL := TRUE;          (* toggle TRUE → send frame   *)
 
-    (* ----------------------------------------------------------------
-       2)  Send-cycle timing
-    -----------------------------------------------------------------*)
-    sendTmr : TON := (PT := T#100ms);    // one query per 100 msec
-    canSend : BOOL;                      // goes TRUE when timer elapsed
+    (*— CAN frame 0x123, 8 data bytes —*)
+    aMsg : ARRAY[0..10] OF BYTE := [
+        16#23, 16#01, 8,
+        16#11,16#22,16#33,16#44,16#55,16#66,16#77,16#88 ];
 
-    (* ----------------------------------------------------------------
-       3)  Query to instrument
-    -----------------------------------------------------------------*)
-    queryBase : STRING(16) := 'VSET1?';  // command without LF
-    txStr     : STRING(20);              // command with LF appended
-    txBusy    : BOOL;                    // fbSend busy flag
-
-    (* ----------------------------------------------------------------
-       4)  ReceiveString & helpers
-    -----------------------------------------------------------------*)
-    fbReceive      : ReceiveString;
-    rxStr          : STRING(80);
-    stringRcvd     : BOOL;
-    rxBusy         : BOOL;
-    rxError        : ComError_t;
-    fbRecvReset    : BOOL;               // one-scan reset pulse
-    trigSend       : R_TRIG;             // edge detector for Reset
-
-    (* ----------------------------------------------------------------
-       5)  Parsed result
-    -----------------------------------------------------------------*)
-    measuredVoltage : REAL := 0.0;
-
-    (* ----------------------------------------------------------------
-       6)  Output debouncing
-    -----------------------------------------------------------------*)
-    busyFilt  : TON := (PT := T#100ms);
-    errFilt   : TON := (PT := T#100ms);
-    busyLong  : BOOL;
-    errLong   : BOOL;
+    (*— helpers —*)
+    trig     : R_TRIG;
+    fbWrite  : ADSWRITE;
+    bBusy    : BOOL;
+    bError   : BOOL;
+    nErrId   : UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
-(* ================================================================
-   A)  Initialise the ring buffers once after cold/warm start
-   ================================================================ *)
-IF NOT fbPort.initialized THEN
-  TxBuf.RdIdx    := 0;  TxBuf.WrIdx    := 0;  TxBuf.Count    := 0;
-  TxBuf.FreeByte := SIZEOF(TxBuf.Buffer); TxBuf.Error := 0; TxBuf.blocked := FALSE;
+      <ST><![CDATA[(* one-shot edge from user flag *)
+trig( CLK := bSendOnce );
 
-  RxBuf.RdIdx    := 0;  RxBuf.WrIdx    := 0;  RxBuf.Count    := 0;
-  RxBuf.FreeByte := SIZEOF(RxBuf.Buffer); RxBuf.Error := 0; RxBuf.blocked := FALSE;
+(* call ADSWRITE **every** scan *)
+fbWrite(
+    NETID   := sDeviceNetId,        (* see section 2 below            *)
+    PORT    := 200,                 (* EL6751 AoE port                *)
+    IDXGRP  := 16#F921,             (* CAN-Tx mailbox                 *)
+    IDXOFFS := 0,
+    LEN     := SIZEOF(aMsg),
+    SRCADDR := ADR(aMsg),
+    WRITE   := trig.Q,              (* 1-cycle pulse → start command  *)
+    TMOUT   := T#1s,
+    BUSY    => bBusy,
+    ERR     => bError,
+    ERRID   => nErrId );
+
+(* reset user trigger after completion *)
+IF NOT bBusy THEN
+    bSendOnce := FALSE;
 END_IF
-
-
-(* ================================================================
-   B)  SerialLineControl – MUST be executed every scan
-   ================================================================ *)
-fbPort(
-    Mode      := SERIALLINEMODE_DEFAULT,                   // 8N1, 115 200 Bd …
-    pComIn    := ADR(GLOBAL_VARS.X003_In),                 // process-image in
-    pComOut   := ADR(GLOBAL_VARS.X003_Out),                // process-image out
-    SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),
-    TxBuffer  := TxBuf,
-    RxBuffer  := RxBuf
-);
-
-
-(* ================================================================
-   C)  Send one query once per second
-   ================================================================ *)
-sendTmr(IN := TRUE);                           // run continuously
-canSend := sendTmr.Q;                          // TRUE when 1 s elapsed
-
-IF canSend THEN
-    sendTmr(IN := FALSE);                      // re-arm for next period
-
-    txStr := CONCAT(queryBase, CHR(10));       // add LF = ASCII 10
-
-    fbSend(
-        SendString := txStr,
-        TxBuffer   := TxBuf,
-        Busy       => txBusy
-    );
-END_IF
-
-
-(* ================================================================
-   D)  Generate one-cycle pulse for ReceiveString.Reset
-   ================================================================ *)
-trigSend(CLK := canSend);                      // goes TRUE for one scan
-fbRecvReset := trigSend.Q;
-
-
-(* ================================================================
-   E)  Receive the reply up to the LF
-   ================================================================ *)
-fbReceive(
-    Reset          := fbRecvReset,             // **edge pulse**
-    Suffix         := CHR(10),                 // stop at LF
-    Timeout        := T#0S,                    // no timeout needed
-    RxBuffer       := RxBuf,
-    ReceivedString := rxStr,
-    StringReceived => stringRcvd,
-    busy           => rxBusy,
-    Error          => rxError,
-    RxTimeout      => (* unused when Suffix ≠ '' *) 
-);
-
-
-(* ================================================================
-   F)  Parse the value when a complete line arrived
-   ================================================================ *)
-IF stringRcvd AND (rxError = COMERROR_NOERROR) THEN
-    measuredVoltage := STRING_TO_REAL(rxStr);  // e.g. "12.34" → 12.34
-END_IF
-
-
-(* ================================================================
-   G)  Debounce indications for EL2008 outputs
-   ================================================================ *)
-busyFilt(IN := txBusy OR rxBusy);              // any comms busy
-errFilt(IN := (rxError <> COMERROR_NOERROR));  // any error code
-
-busyLong := busyFilt.Q;                        // TRUE >100 ms
-errLong  := errFilt.Q;                         // TRUE >100 ms
-
-
-(* ================================================================
-   H)  Drive the digital outputs
-   ================================================================ *)
-GLOBAL_VARS.DO_EL2008_RELAY_0 := NOT busyLong; // high when idle/ready
-GLOBAL_VARS.DO_EL2008_RELAY_1 := errLong;      // high when fault
-GLOBAL_VARS.DO_EL2008_OUT_2   := stringRcvd;   // strobe when data received
 ]]></ST>
     </Implementation>
   </POU>
