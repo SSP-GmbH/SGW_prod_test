@@ -1,49 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1">
   <POU Name="MAIN" Id="{cf7a1f3b-01b2-485c-af22-ebbbf99dfab4}" SpecialFunc="None">
-    <Declaration><![CDATA[ (* POUs/MAIN *)
+    <Declaration><![CDATA[(* POUs/MAIN *)
 
 PROGRAM MAIN
-
 VAR
-    (*— user settings —*)
-    sDeviceNetId : T_AmsNetId := '5.156.240.208.7.1';      (* leave empty ⇒ local EL6751 *) 
-    bSendOnce    : BOOL := TRUE;          (* toggle TRUE → send frame   *)
+    // — your EL6751’s “CAN interface” NetID (from the ADS tab) —
+    sDeviceNetId : T_AmsNetId := '5.156.240.208.7.1';
 
-    (*— CAN frame 0x123, 8 data bytes —*)
-    aMsg : ARRAY[0..10] OF BYTE := [
-        16#23, 16#01, 8,
-        16#11,16#22,16#33,16#44,16#55,16#66,16#77,16#88 ];
+    // — one 11-bit CAN frame (ID=0x123, DLC=8, data=11…88h) —
+    aCanFrame    : ARRAY[0..10] OF BYTE := [
+        16#23,    // ID bits 7..0
+        16#01,    // ID bits 10..8 + RTR=0
+        8,        // DLC = 8
+        16#11,16#22,16#33,16#44,
+        16#55,16#66,16#77,16#88
+    ];
 
-    (*— helpers —*)
-    trig     : R_TRIG;
-    fbWrite  : ADSWRITE;
-    bBusy    : BOOL;
-    bError   : BOOL;
-    nErrId   : UDINT;
+    // — 1 s timer + one-shot detector —
+    sendTmr      : TON   := (PT := T#1s);
+    fbEdge       : R_TRIG;               // detects the 1 s boundary
+    bExecute     : BOOL;                 // TRUE for exactly one scan/sec
+
+    // — ADSWRITE FB + status flags —
+    fbWrite      : ADSWRITE;  
+    bBusy        : BOOL;                 // FB is still working
+    bError       : BOOL;                 // FB saw an ADS error
+    nErrId       : UDINT;                // ADS error code
+
+    // — optional diagnostics —
+    ErrCount     : UDINT := 0;
+    LastErrId    : UDINT := 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* one-shot edge from user flag *)
-trig( CLK := bSendOnce );
+      <ST><![CDATA[//─────────────────────────────────────────────────────────────────────────────
+// 1) Run the timer every scan
+sendTmr(IN := NOT sendTmr.Q, PT := T#1s);
+//   - this makes sendTmr.Q go TRUE once every second for exactly one scan
+//─────────────────────────────────────────────────────────────────────────────
 
-(* call ADSWRITE **every** scan *)
+// 2) Edge-detect that one-scan Q
+fbEdge( CLK := sendTmr.Q );
+
+// 3) Only execute when the one-shot fires AND the FB is idle
+bExecute := fbEdge.Q AND NOT bBusy;
+
+//─────────────────────────────────────────────────────────────────────────────
+// 4) ADSWRITE: called every scan with full args, WRITE only on bExecute
 fbWrite(
-    NETID   := sDeviceNetId,        (* see section 2 below            *)
-    PORT    := 200,                 (* EL6751 AoE port                *)
-    IDXGRP  := 16#F921,             (* CAN-Tx mailbox                 *)
+    NETID   := sDeviceNetId,
+    PORT    := 200,
+    IDXGRP  := 16#F921,           // CAN-Tx mailbox
     IDXOFFS := 0,
-    LEN     := SIZEOF(aMsg),
-    SRCADDR := ADR(aMsg),
-    WRITE   := trig.Q,              (* 1-cycle pulse → start command  *)
-    TMOUT   := T#1s,
+    LEN     := SIZEOF(aCanFrame), // 11 bytes
+    SRCADDR := ADR(aCanFrame),
+    WRITE   := bExecute,          // one-scan TRUE once/sec, and only if not busy
+    TMOUT   := T#500ms,           // clears BUSY < 1 s
     BUSY    => bBusy,
     ERR     => bError,
-    ERRID   => nErrId );
+    ERRID   => nErrId
+);
 
-(* reset user trigger after completion *)
-IF NOT bBusy THEN
-    bSendOnce := FALSE;
+//─────────────────────────────────────────────────────────────────────────────
+// 5) Reset the timer logic immediately after the trigger
+IF bExecute THEN
+    sendTmr(IN := FALSE);        // re-arm for the next second
+END_IF
+
+//─────────────────────────────────────────────────────────────────────────────
+// 6) Log any ADS errors but keep running
+IF bError THEN
+    ErrCount  := ErrCount + 1;
+    LastErrId := nErrId;
+    // (optional) force immediate retry:
+    // sendTmr(IN := FALSE); fbEdge(CLK := FALSE); bExecute := FALSE;
 END_IF
 ]]></ST>
     </Implementation>

@@ -14,8 +14,8 @@ VAR_GLOBAL
 	DO_EL2008_OUT_7      AT %Q* : BOOL;   // EL2008 channel 7
 	DO_EL2008_OUT_8      AT %Q* : BOOL;   // EL2008 channel 8
 
-  	X003_Out       AT %Q* : PcComOutData;
-  	X003_In        AT %I* : PcComInData;
+  	X003_Out             AT %Q* : PcComOutData;
+  	X003_In              AT %I* : PcComInData;
 END_VAR
 ]]></Declaration>
   </GVL>

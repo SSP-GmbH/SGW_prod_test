@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="CAN_TxMsgSlot" Id="{e2d4410a-4abe-4a2a-8e75-cbf1e294c437}">
+    <Declaration><![CDATA[TYPE CAN_TxMsgSlot :
+STRUCT
+	cobId : UINT;
+    data  : ARRAY[0..7] OF USINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
