@@ -18,6 +18,9 @@
     <LibraryReferences>{4a9af108-0e20-4f16-ab01-ec61587ffe50}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\CAN_MSG.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CAN_TxMsgSlot.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -43,6 +46,10 @@
     <Folder Include="POUs" />
   </ItemGroup>
   <ItemGroup>
+    <PlaceholderReference Include="Tc2_EtherCAT">
+      <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_EtherCAT</Namespace>
+    </PlaceholderReference>
     <PlaceholderReference Include="Tc2_IoFunctions">
       <DefaultResolution>Tc2_IoFunctions, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_IoFunctions</Namespace>
