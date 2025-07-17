@@ -9,8 +9,14 @@ VAR
 	cPort  : T_AmsPort  := 200;                   // fixed AoE port
 
 
-    aFilter  : ARRAY[0..1] OF BYTE := [16#00, 16#02];  // 0x200, bit15=0 → enable
-    fbFilter : ADSWRITE;
+    aFilter  : ARRAY[0..9] OF BYTE := [
+		16#01,16#00,      // one range entry
+		16#00,16#00,      // start ID = 0x000
+		0,0,              // reserved
+		16#00,16#05,      // end   ID = 0x500
+		0,0               // reserved
+	];
+	fbFilter : ADSWRITE;
     filtBusy : BOOL;
     filtErr  : BOOL;
     filtOK   : BOOL := FALSE;
