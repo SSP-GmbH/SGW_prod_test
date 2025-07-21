@@ -5,6 +5,7 @@
 VAR_GLOBAL
 	// gCanIf_NoOfTx        AT %Q* : UINT;
 	// gCanIf_TxMsg         AT %Q* : ARRAY[0..9] OF CAN_TxMsgSlot;
+
 END_VAR
 ]]></Declaration>
   </GVL>
