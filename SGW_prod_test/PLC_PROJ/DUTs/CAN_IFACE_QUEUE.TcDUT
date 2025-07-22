@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="CAN_IFACE_QUEUE" Id="{3ffdc7dd-787c-41db-9cf1-6fae272c6f97}">
+    <Declaration><![CDATA[TYPE CAN_IFACE_QUEUE :
+STRUCT
+	TxCounter      : UINT;
+	RxCounter      : UINT;
+	NoOfRxMessages : UINT;
+	RxMessages     : ARRAY[0..9] OF CAN_TxMsgSlot; 
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

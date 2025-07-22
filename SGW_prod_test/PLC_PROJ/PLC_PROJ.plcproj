@@ -18,6 +18,9 @@
     <LibraryReferences>{4a9af108-0e20-4f16-ab01-ec61587ffe50}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\CAN_IFACE_QUEUE.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\CAN_MSG.TcDUT">
       <SubType>Code</SubType>
     </Compile>

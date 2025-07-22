@@ -3,9 +3,8 @@
   <GVL Name="EL6751_GVLs" Id="{be69125a-6d33-4cc5-81a5-c4172fc8b04f}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL
-	// gCanIf_NoOfTx        AT %Q* : UINT;
-	// gCanIf_TxMsg         AT %Q* : ARRAY[0..9] OF CAN_TxMsgSlot;
-
+	gCanIf_TxMsg         AT %Q* : CAN_IFACE_QUEUE;
+	gCanIf_RxMsg         AT %I* : CAN_IFACE_QUEUE;
 END_VAR
 ]]></Declaration>
   </GVL>

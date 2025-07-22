@@ -5,77 +5,35 @@
 
 PROGRAM MAIN
 VAR
-	cNetId : T_AmsNetId := '5.156.240.208.7.1';   // EL6751 “CAN interface”
-	cPort  : T_AmsPort  := 200;                   // fixed AoE port
-
-    aFilter    : ARRAY[0..1] OF BYTE := [16#00,16#05];  // low=0x00, hi=0x05 bit15=0→activate :contentReference[oaicite:2]{index=2}
-    fbFilter   : ADSWRITE;
-    bFilterOk  : BOOL := FALSE;
-    bFilterBusy: BOOL;
-    bFilterErr : BOOL;
-
-    rxBuf  : ARRAY[0..639] OF BYTE;    // 640 bytes max = ~50×11 B :contentReference[oaicite:3]{index=3}
-    fbRead : ADSREADEX;
-    rdBusy : BOOL;
-    rdCnt  : UDINT;
-    rdErr  : BOOL;
-    rdErrId: UDINT;
-
-    messages  : ARRAY[0..49] OF CAN_MSG;         // parsed output
-    nMsg, i   : INT;
-    base      : INT;
+    messages      : ARRAY[0..9] OF CAN_TxMsgSlot;  // parsed output
+    nMsg, i       : UINT;
+    baseIdx       : INT;
+	someFlag : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* —— Arm the filter once —— *)
-IF NOT bFilterOk THEN
-    fbFilter(
-        NETID   := cNetId,
-        PORT    := cPort,
-        IDXGRP  := 16#F923,           // filter mailbox
-        IDXOFFS := 0,
-        LEN     := SIZEOF(aFilter),   // = 2 bytes
-        SRCADDR := ADR(aFilter),
-        WRITE   := TRUE,
-        TMOUT   := T#2000ms,
-        BUSY    => bFilterBusy,
-        ERR     => bFilterErr
-    );
-    IF NOT bFilterBusy AND NOT bFilterErr THEN
-        bFilterOk := TRUE;           // filter armed
-    END_IF
-END_IF
-
-(* —— Drain the Rx-mailbox —— *)
-fbRead(
-    NETID    := cNetId,
-    PORT     := cPort,
-    IDXGRP   := 16#F921,            // shared Tx/Rx mailbox
-    IDXOFFS  := 0,
-    LEN      := SIZEOF(rxBuf),
-    DESTADDR := ADR(rxBuf),
-    READ     := (NOT rdBusy) AND bFilterOk,
-    TMOUT    := T#300MS,
-    BUSY     => rdBusy,
-    ERR      => rdErr,
-    ERRID    => rdErrId,
-    COUNT_R  => rdCnt
-);
-
-(* —— Parse every 11-byte frame —— *)
-IF (NOT rdBusy) AND (rdCnt >= 11) THEN
-    nMsg := 0;
-    WHILE (nMsg < 50) AND ((TO_UDINT(nMsg)*11 + 11) <= rdCnt) DO
-        base := nMsg * 11;
-        // reconstruct 11-bit ID
-        messages[nMsg].ID  := TO_UDINT(rxBuf[base])
-                            OR SHL((TO_UDINT(rxBuf[base+1]) AND 16#07), 8);
-        messages[nMsg].DLC := rxBuf[base+2];
-        FOR i := 0 TO messages[nMsg].DLC - 1 DO
-            messages[nMsg].DATA[i] := rxBuf[base + 3 + i];
-        END_FOR;
-        nMsg := nMsg + 1;
-    END_WHILE;
+      <ST><![CDATA[
+IF someFlag THEN
+	GLOBAL_VARS.DO_EL2008_OUT_2 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 0;
+	GLOBAL_VARS.DO_EL2008_OUT_4 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 1;
+	GLOBAL_VARS.DO_EL2008_OUT_5 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 2;
+	GLOBAL_VARS.DO_EL2008_OUT_6 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 3;
+	GLOBAL_VARS.DO_EL2008_OUT_7 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 4;
+	
+	FOR i := 0 TO EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages DO
+		messages[i] := EL6751_GVLs.gCanIf_RxMsg.RxMessages[i];
+	END_FOR;
+	FOR i := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages TO 9 DO
+		messages[i].cobId   := 0;
+		messages[i].data[0] := 0;
+		messages[i].data[1] := 0;
+		messages[i].data[2] := 0;
+		messages[i].data[3] := 0;
+		messages[i].data[4] := 0;
+		messages[i].data[5] := 0;
+		messages[i].data[6] := 0;
+		messages[i].data[7] := 0;
+	END_FOR;
 END_IF
 ]]></ST>
     </Implementation>
