@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_ParseSlot" Id="{253ddd2c-3149-41c9-a856-e6b24f856826}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_ParseSlot : CAN_MSG
+
+VAR_INPUT
+	slot : CAN_MsgSlot;    // the raw slot from EL6751
+END_VAR
+
+VAR
+    tmpID  : UINT;
+    tmpDLC : UINT;
+    i      : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// 1) Extract the 11-bit ID
+tmpID := SHR(slot.cobId, 5);           // bits 5..15
+
+// 2) Extract the 4-bit DLC
+tmpDLC := slot.cobId AND 16#000F;      // bits 0..3
+
+// 3) Fill result
+F_ParseSlot.ID  := tmpID;             // widens UINT → UDINT
+F_ParseSlot.DLC := TO_BYTE(tmpDLC);
+
+// 4) Copy up to 8 data bytes
+FOR i := 0 TO TO_INT(F_ParseSlot.DLC) - 1 DO
+    F_ParseSlot.DATA[i] := slot.data[i];
+END_FOR
+
+// Zero out any unused bytes (optional)
+FOR i := TO_INT(F_ParseSlot.DLC) TO 7 DO
+    F_ParseSlot.DATA[i] := 0;
+END_FOR
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -3,8 +3,8 @@
   <DUT Name="CAN_MsgSlot" Id="{e2d4410a-4abe-4a2a-8e75-cbf1e294c437}">
     <Declaration><![CDATA[TYPE CAN_MsgSlot :
 STRUCT
-	cobId : UINT;
-    data  : ARRAY[0..7] OF USINT;
+	cobId : UINT; // Unsigned 16-bit
+    data  : ARRAY[0..7] OF BYTE;
 END_STRUCT
 END_TYPE
 ]]></Declaration>

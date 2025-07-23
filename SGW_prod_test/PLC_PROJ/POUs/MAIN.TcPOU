@@ -5,30 +5,35 @@
 
 PROGRAM MAIN
 VAR
-    messages      : ARRAY[0..9] OF CAN_MsgSlot;  // parsed output
+    CanRxShadow   : CAN_IFACE_QUEUE;
     nMsg          : UINT := 0;
 	i             : UINT := 0;
 	someFlag      : BOOL := FALSE;
 
-	testMsg       : CAN_MsgSlot;
-
+	msgSlot       : CAN_MsgSlot;
+	msgCan        : CAN_MSG;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
+CanRxShadow := EL6751_GVLs.gCanIf_RxMsg;
+
 IF someFlag THEN
-	GLOBAL_VARS.DO_EL2008_OUT_2 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 0;
-	GLOBAL_VARS.DO_EL2008_OUT_4 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 1;
-	GLOBAL_VARS.DO_EL2008_OUT_5 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 2;
-	GLOBAL_VARS.DO_EL2008_OUT_6 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 3;
-	// GLOBAL_VARS.DO_EL2008_OUT_7 := bBusy;
+	GLOBAL_VARS.DO_EL2008_OUT_2 := CanRxShadow.NoOfMessages > 0;
+	GLOBAL_VARS.DO_EL2008_OUT_4 := CanRxShadow.NoOfMessages > 1;
+	GLOBAL_VARS.DO_EL2008_OUT_5 := CanRxShadow.NoOfMessages > 2;
+	GLOBAL_VARS.DO_EL2008_OUT_6 := CanRxShadow.NoOfMessages > 3;
+	GLOBAL_VARS.DO_EL2008_OUT_7 := CanRxShadow.NoOfMessages > 8;
 
-	IF EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 0 THEN
+	IF CanRxShadow.NoOfMessages > 0 THEN
 
-		FOR i := 0 TO EL6751_GVLs.gCanIf_RxMsg.NoOfMessages DO
-			EL6751_GVLs.gCanIf_TxMsg.Messages[i] := EL6751_GVLs.gCanIf_RxMsg.Messages[i];
+		FOR i := 0 TO CanRxShadow.NoOfMessages DO
+			msgCan    := F_ParseSlot(slot := CanRxShadow.Messages[i]);
+			msgCan.ID := msgCan.ID + 1;
+			msgSlot   := F_ComposeSlot(msg := msgCan);
+			EL6751_GVLs.gCanIf_TxMsg.Messages[i] := msgSlot;
 		END_FOR
-		EL6751_GVLs.gCanIf_TxMsg.NoOfMessages := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages;
+		EL6751_GVLs.gCanIf_TxMsg.NoOfMessages := CanRxShadow.NoOfMessages;
 		EL6751_GVLs.gCanIf_TxMsg.TxCounter := EL6751_GVLs.gCanIf_TxMsg.TxCounter + 1;
 
 	END_IF

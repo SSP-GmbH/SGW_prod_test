@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="F_ComposeSlot" Id="{4269443b-54b8-4679-8094-0961e5e1cbad}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_ComposeSlot : CAN_MsgSlot
+
+VAR_INPUT
+    msg : CAN_MSG;        // your prepared CAN message
+END_VAR
+
+VAR
+    packedID : UINT;
+    i        : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// 1) Pack ID into bits 5..15, ensure it’s ≤ 0x07FF
+packedID := SHL(TO_UINT(msg.ID AND 16#07FF), 5);
+
+// 2) OR in the DLC (lower nibble), ensure it’s ≤ 8
+packedID := packedID OR (TO_UINT(msg.DLC AND 16#000F));
+
+// 3) Fill result
+F_ComposeSlot.cobId := packedID;
+
+// 4) Copy data bytes
+FOR i := 0 TO TO_INT(msg.DLC) - 1 DO
+    F_ComposeSlot.data[i] := msg.DATA[i];
+END_FOR
+
+// Zero out any unused bytes (optional)
+FOR i := TO_INT(msg.DLC) TO 7 DO
+    F_ComposeSlot.data[i] := 0;
+END_FOR
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
