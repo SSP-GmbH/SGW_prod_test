@@ -5,35 +5,67 @@
 
 PROGRAM MAIN
 VAR
-    messages      : ARRAY[0..9] OF CAN_TxMsgSlot;  // parsed output
-    nMsg, i       : UINT;
-    baseIdx       : INT;
-	someFlag : BOOL := FALSE;
+    messages      : ARRAY[0..9] OF CAN_MsgSlot;  // parsed output
+    nMsg          : UINT := 0;
+	i             : UINT := 0;
+	someFlag      : BOOL := FALSE;
+
+	testMsg      : CAN_MsgSlot;
+  	msg          : CAN_MSG;
+
+	sDeviceNetId : T_AmsNetId := '5.156.240.208.7.1';
+    fbWrite      : ADSWRITE;  
+    bBusy        : BOOL;                 // FB is still working
+    bError       : BOOL;                 // FB saw an ADS error
+    nErrId       : UDINT;                // ADS error code
+    bExecute     : BOOL;                 // TRUE for exactly one scan/sec
+	
+	// — optional diagnostics —
+    ErrCount     : UDINT := 0;
+    LastErrId    : UDINT := 0;
+	
+	fbWriteTimeout : TIME := T#100MS;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 IF someFlag THEN
-	GLOBAL_VARS.DO_EL2008_OUT_2 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 0;
-	GLOBAL_VARS.DO_EL2008_OUT_4 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 1;
-	GLOBAL_VARS.DO_EL2008_OUT_5 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 2;
-	GLOBAL_VARS.DO_EL2008_OUT_6 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 3;
-	GLOBAL_VARS.DO_EL2008_OUT_7 := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages > 4;
-	
-	FOR i := 0 TO EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages DO
-		messages[i] := EL6751_GVLs.gCanIf_RxMsg.RxMessages[i];
-	END_FOR;
-	FOR i := EL6751_GVLs.gCanIf_RxMsg.NoOfRxMessages TO 9 DO
-		messages[i].cobId   := 0;
-		messages[i].data[0] := 0;
-		messages[i].data[1] := 0;
-		messages[i].data[2] := 0;
-		messages[i].data[3] := 0;
-		messages[i].data[4] := 0;
-		messages[i].data[5] := 0;
-		messages[i].data[6] := 0;
-		messages[i].data[7] := 0;
-	END_FOR;
+	GLOBAL_VARS.DO_EL2008_OUT_2 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 0;
+	GLOBAL_VARS.DO_EL2008_OUT_4 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 1;
+	GLOBAL_VARS.DO_EL2008_OUT_5 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 2;
+	GLOBAL_VARS.DO_EL2008_OUT_6 := EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 3;
+	GLOBAL_VARS.DO_EL2008_OUT_7 := bBusy;
+
+	IF EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 0 THEN
+		testMsg := EL6751_GVLs.gCanIf_RxMsg.Messages[0];
+		msg.ID := TO_UDINT(SHR(testMsg.cobId, 5) AND 16#07FF);
+		msg.DLC := TO_BYTE(testMsg.cobId AND 16#000F);
+		FOR i := 0 TO TO_INT(msg.DLC) - 1 DO
+		  msg.DATA[i] := TO_BYTE(testMsg.data[i]);
+		END_FOR;
+	END_IF
+
+	bExecute := NOT bBusy AND EL6751_GVLs.gCanIf_RxMsg.NoOfMessages > 0;
+	fbWrite(
+		NETID   := sDeviceNetId,
+		PORT    := 200,
+		IDXGRP  := 16#F921,
+		IDXOFFS := 0,
+		LEN     := SIZEOF(msg), // SIZEOF(EL6751_GVLs.gCanIf_RxMsg.Messages[0]),
+		SRCADDR := ADR(msg),    // ADR(EL6751_GVLs.gCanIf_RxMsg.Messages[0]),
+		WRITE   := bExecute,
+		TMOUT   := fbWriteTimeout,
+		BUSY    => bBusy,
+		ERR     => bError,
+		ERRID   => nErrId
+	);
+
+	IF bError THEN
+		ErrCount  := ErrCount + 1;
+		LastErrId := nErrId;
+	END_IF
+
+	GLOBAL_VARS.DO_EL2008_OUT_7 := bBusy;
 END_IF
 ]]></ST>
     </Implementation>

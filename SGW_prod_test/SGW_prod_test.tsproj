@@ -2,7 +2,7 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.15">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{D77DDFE2-D68C-1B5E-D1AB-E79062C4CB89}" AutoDeleteType="true">CAN_TxMsgSlot</Name>
+			<Name GUID="{4E382FA6-B88D-57D1-FEE9-B73E50F590DC}" AutoDeleteType="true">CAN_MsgSlot</Name>
 			<BitSize>80</BitSize>
 			<SubItem>
 				<Name>cobId</Name>
@@ -22,7 +22,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{F29F395B-5C34-80C6-C010-0F8AECFB3CF5}" AutoDeleteType="true">CAN_IFACE_QUEUE</Name>
+			<Name GUID="{0A7C23DA-4878-348C-0362-105035C41425}" AutoDeleteType="true">CAN_IFACE_QUEUE</Name>
 			<BitSize>848</BitSize>
 			<SubItem>
 				<Name>TxCounter</Name>
@@ -37,14 +37,14 @@
 				<BitOffs>16</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>NoOfRxMessages</Name>
+				<Name>NoOfMessages</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>32</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>RxMessages</Name>
-				<Type GUID="{D77DDFE2-D68C-1B5E-D1AB-E79062C4CB89}">CAN_TxMsgSlot</Type>
+				<Name>Messages</Name>
+				<Type GUID="{4E382FA6-B88D-57D1-FEE9-B73E50F590DC}">CAN_MsgSlot</Type>
 				<ArrayInfo>
 					<LBound>0</LBound>
 					<Elements>10</Elements>
@@ -306,19 +306,19 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{33BD99ED-23F7-B82E-EE61-05089A3BCD5E}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C4F60A46-3C30-97A6-238E-F9C21DE69713}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
-							<Type GUID="{F29F395B-5C34-80C6-C010-0F8AECFB3CF5}">CAN_IFACE_QUEUE</Type>
-						</Var>
-						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_0</Name>
 							<Comment><![CDATA[ EL2008 channel 1]]></Comment>
 							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
+							<Type GUID="{0A7C23DA-4878-348C-0362-105035C41425}">CAN_IFACE_QUEUE</Type>
 						</Var>
 						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_1</Name>
@@ -364,7 +364,7 @@
 						<Name>PlcTask Inputs</Name>
 						<Var>
 							<Name>EL6751_GVLs.gCanIf_RxMsg</Name>
-							<Type GUID="{F29F395B-5C34-80C6-C010-0F8AECFB3CF5}">CAN_IFACE_QUEUE</Type>
+							<Type GUID="{0A7C23DA-4878-348C-0362-105035C41425}">CAN_IFACE_QUEUE</Type>
 						</Var>
 						<Var>
 							<Name>GLOBAL_VARS.X003_In</Name>
@@ -1683,6 +1683,7 @@ Bit1: Value smaller than Limit2]]></Comment>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 6 (EL6751)^Box 9 (CAN Interface)">
 				<Link VarA="PlcTask Inputs^EL6751_GVLs.gCanIf_RxMsg" VarB="Inputs^RxQueue"/>
+				<Link VarA="PlcTask Outputs^EL6751_GVLs.gCanIf_TxMsg" VarB="Outputs^TxQueue"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>

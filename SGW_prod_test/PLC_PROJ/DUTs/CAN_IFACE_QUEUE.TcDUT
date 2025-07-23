@@ -5,8 +5,8 @@
 STRUCT
 	TxCounter      : UINT;
 	RxCounter      : UINT;
-	NoOfRxMessages : UINT;
-	RxMessages     : ARRAY[0..9] OF CAN_TxMsgSlot; 
+	NoOfMessages : UINT;
+	Messages     : ARRAY[0..9] OF CAN_MsgSlot; 
 END_STRUCT
 END_TYPE
 ]]></Declaration>
