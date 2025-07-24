@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_PowerSupply" Id="{f3e68b85-65b6-4432-9207-06eca8c7a1d9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_PowerSupply
+
+VAR_INPUT
+  pComIn     : POINTER TO BYTE;
+  SizeComIn  : UDINT;
+END_VAR
+
+VAR_IN_OUT
+  pComOut    : POINTER TO BYTE;
+  SizeComOut : UDINT;
+END_VAR
+
+VAR
+  fbLine  : SerialLineControl;  // call every scan
+  fbSend  : SendString;
+  fbRecv  : ReceiveString;
+  bufTx   : ComBuffer;          // your existing TxBuf
+  bufRx   : ComBuffer;          // your existing RxBuf
+  _last   : STRING(80);
+  _err    : ComError_t;
+  _busy   : BOOL;
+  _isRecv : BOOL := FALSE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="GetCurrent" Id="{3c0f19b5-476c-46aa-8d4c-37fda8b65d44}">
+      <Declaration><![CDATA[METHOD GetCurrent : REAL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetVoltage" Id="{5cbe3dd5-384a-4941-8c1b-2d53f1e3ea31}">
+      <Declaration><![CDATA[METHOD GetVoltage : REAL
+VAR
+	_str : STRING(80);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fbSend(SendString := CONCAT('VSET1?', CHR(10)), TxBuffer := bufTx);
+
+fbRecv(
+	Reset           :=  TRUE,
+	Suffix          :=  CHR(10),
+	Timeout         :=  T#200MS,
+	RxBuffer        :=  bufRx,
+	ReceivedString  :=  _str,
+	busy            =>  _busy,
+	StringReceived  =>  _isRecv,
+	Error           =>  _err
+);
+
+IF _err = COMERROR_NOERROR THEN
+	GetVoltage := STRING_TO_REAL(_str);
+ELSE
+	GetVoltage := -1.0;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Init" Id="{9b6479ca-14f4-4e4a-aad1-b730b0393e2f}">
+      <Declaration><![CDATA[METHOD Init : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+fbLine(
+    Mode      := SERIALLINEMODE_DEFAULT,                   // 8N1, 115 200 Bd …
+    pComIn    := ADR(GLOBAL_VARS.X003_In),                 // process-image in
+    pComOut   := ADR(GLOBAL_VARS.X003_Out),                // process-image out
+    SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),
+    TxBuffer  := bufTx,
+    RxBuffer  := bufRx
+);
+
+Init := TRUE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetCurrent" Id="{92d298c1-4504-41de-9c93-8ab098dc5841}">
+      <Declaration><![CDATA[METHOD SetCurrent
+VAR_INPUT
+	amps : REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetVoltage" Id="{c6b04aa2-4d3e-4b68-8450-de860b530b4f}">
+      <Declaration><![CDATA[METHOD SetVoltage
+
+VAR_INPUT
+	volts : REAL;
+END_VAR
+
+VAR
+	raw : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+raw := VoltageToRaw(volts);
+
+fbSend(
+	SendString := CONCAT(CONCAT('VSET1:', REAL_TO_STRING(volts)), CHR(10)),
+	TxBuffer   := bufTx,
+	Error      => _err
+);
+]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

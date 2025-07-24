@@ -5,39 +5,96 @@
 
 PROGRAM MAIN
 VAR
-    CanRxShadow   : CAN_IFACE_QUEUE;
-    nMsg          : UINT := 0;
-	i             : UINT := 0;
-	someFlag      : BOOL := FALSE;
-
-	msgSlot       : CAN_MsgSlot;
-	msgCan        : CAN_MSG;
+  CanRx         : CAN_IFACE_QUEUE;
+  CanTx         : CAN_IFACE_QUEUE;
+  i             : INT;
+  slotIn        : CAN_MsgSlot;
+  slotOut       : CAN_MsgSlot;
+  msgIn         : CAN_MSG;
+  msgOut        : CAN_MSG;
+  rawValue      : UINT;
+  physValue     : REAL;
+  
+  FB_PSU        : FB_PowerSupply;
+  initDone      : BOOL := FALSE;
+  
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-CanRxShadow := EL6751_GVLs.gCanIf_RxMsg;
-
-IF someFlag THEN
-	GLOBAL_VARS.DO_EL2008_OUT_2 := CanRxShadow.NoOfMessages > 0;
-	GLOBAL_VARS.DO_EL2008_OUT_4 := CanRxShadow.NoOfMessages > 1;
-	GLOBAL_VARS.DO_EL2008_OUT_5 := CanRxShadow.NoOfMessages > 2;
-	GLOBAL_VARS.DO_EL2008_OUT_6 := CanRxShadow.NoOfMessages > 3;
-	GLOBAL_VARS.DO_EL2008_OUT_7 := CanRxShadow.NoOfMessages > 8;
-
-	IF CanRxShadow.NoOfMessages > 0 THEN
-
-		FOR i := 0 TO CanRxShadow.NoOfMessages DO
-			msgCan    := F_ParseSlot(slot := CanRxShadow.Messages[i]);
-			msgCan.ID := msgCan.ID + 1;
-			msgSlot   := F_ComposeSlot(msg := msgCan);
-			EL6751_GVLs.gCanIf_TxMsg.Messages[i] := msgSlot;
-		END_FOR
-		EL6751_GVLs.gCanIf_TxMsg.NoOfMessages := CanRxShadow.NoOfMessages;
-		EL6751_GVLs.gCanIf_TxMsg.TxCounter := EL6751_GVLs.gCanIf_TxMsg.TxCounter + 1;
-
-	END_IF
+IF NOT initDone THEN
+  FB_PSU.Init();
+  initDone := TRUE;
 END_IF
+
+
+// 1) Read the hardware Rx shadow
+CanRx := EL6751_GVLs.gCanIf_RxMsg;
+
+// 2) Process all received messages
+IF CanRx.NoOfMessages > 0 THEN
+  // Prepare Tx queue index
+  FOR i := 0 TO CanRx.NoOfMessages - 1 DO
+    slotIn := CanRx.Messages[i];
+    // Decode slot → CAN_MSG
+    msgIn := F_ParseSlot(slot := slotIn);
+
+    // Route by ID
+    CASE msgIn.ID OF
+      16#200:  // Set voltage command
+        // Expect DLC = 2
+        IF msgIn.DLC = 2 THEN
+          // bytes big-endian: DATA[0]=MSB, DATA[1]=LSB
+          rawValue := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
+          physValue := RawToVoltage(raw := rawValue);
+          // Call RS232 SetVoltage (in volts)
+          FB_PSU.SetVoltage(volts := physValue);
+        END_IF;
+
+      16#300:  // Set current command
+        IF msgIn.DLC = 2 THEN
+          rawValue := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
+          physValue := RawToCurrent(raw := rawValue);
+          FB_PSU.SetCurrent(amps := physValue);
+        END_IF;
+
+      // You could also handle GetVoltage (0x210) or GetCurrent (0x310)
+      // by reading back right away and sending feedback
+    END_CASE;
+
+    // --- Prepare feedback: voltage at 0x201, current at 0x301 ---
+    // Always send both feedbacks once per cycle (or only if changed)
+    // 3A) Read back voltage and compose 0x201
+    physValue := FB_PSU.GetVoltage();
+    rawValue := VoltageToRaw(volts := physValue);
+    msgOut.ID  := 16#201;
+    msgOut.DLC := 2;
+    msgOut.DATA[0] := TO_BYTE(SHR(rawValue, 8));   // MSB
+    msgOut.DATA[1] := TO_BYTE(rawValue AND 16#FF); // LSB
+    slotOut := F_ComposeSlot(msg := msgOut);
+    CanTx.Messages[i*2 + 0] := slotOut;
+
+    // 3B) Read back current and compose 0x301
+    physValue := FB_PSU.GetCurrent();
+    rawValue := CurrentToRaw(amps := physValue);
+    msgOut.ID  := 16#301;
+    msgOut.DLC := 2;
+    msgOut.DATA[0] := TO_BYTE(SHR(rawValue, 8));
+    msgOut.DATA[1] := TO_BYTE(rawValue AND 16#FF);
+    slotOut := F_ComposeSlot(msg := msgOut);
+    CanTx.Messages[i*2 + 1] := slotOut;
+
+  END_FOR
+
+  // 4) Finalize Tx queue
+  // Number of slots used = 2 × received commands
+  CanTx.NoOfMessages := CanRx.NoOfMessages * 2;
+  // Signal new data
+  CanTx.TxCounter := CanTx.TxCounter + 1;
+END_IF
+
+// 5) Write back to hardware shadow
+EL6751_GVLs.gCanIf_TxMsg := CanTx;
 ]]></ST>
     </Implementation>
   </POU>

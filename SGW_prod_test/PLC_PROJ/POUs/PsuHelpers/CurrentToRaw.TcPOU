@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="CurrentToRaw" Id="{08ef05f9-463e-4bda-b3a7-c03a9456ce66}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION CurrentToRaw : UINT
+
+VAR_INPUT
+  amps : REAL;           // 0.00…5.00
+END_VAR
+
+VAR
+  tmp : REAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+tmp := amps * 100.0;
+
+IF tmp < 0.0 THEN
+	tmp := 0.0;
+ELSIF tmp > 500.0 THEN
+	tmp := 500.0;
+END_IF;
+
+CurrentToRaw := REAL_TO_UINT(tmp);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

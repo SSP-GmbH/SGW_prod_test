@@ -47,11 +47,28 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\PsuHelpers\CurrentToRaw.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PsuHelpers\RawToCurrent.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PsuHelpers\RawToVoltage.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PsuHelpers\VoltageToRaw.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\PsuIface\FB_PowerSupply.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
     <Folder Include="POUs\CanHelpers" />
+    <Folder Include="POUs\PsuIface" />
+    <Folder Include="POUs\PsuHelpers" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />
   </ItemGroup>

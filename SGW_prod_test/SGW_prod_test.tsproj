@@ -2,31 +2,6 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.15">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom" AutoDeleteType="true">PcComInData</Name>
-			<Comment><![CDATA[ This data type is corresponding to the
-   PC COM-Port data structure used in
-   the TwinCAT SystemManager. 
-   (KL-6xxx emulation mode with 64 data bytes)
-]]></Comment>
-			<BitSize>528</BitSize>
-			<SubItem>
-				<Name>SerStatus</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000004}">WORD</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>D</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
-				<ArrayInfo>
-					<LBound>0</LBound>
-					<Elements>64</Elements>
-				</ArrayInfo>
-				<BitSize>512</BitSize>
-				<BitOffs>16</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
 			<Name GUID="{62560E8D-6BA3-4E97-7670-9692C111CE0C}" AutoDeleteType="true">CAN_MsgSlot</Name>
 			<BitSize>80</BitSize>
 			<SubItem>
@@ -77,6 +52,31 @@
 				</ArrayInfo>
 				<BitSize>800</BitSize>
 				<BitOffs>48</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom" AutoDeleteType="true">PcComInData</Name>
+			<Comment><![CDATA[ This data type is corresponding to the
+   PC COM-Port data structure used in
+   the TwinCAT SystemManager. 
+   (KL-6xxx emulation mode with 64 data bytes)
+]]></Comment>
+			<BitSize>528</BitSize>
+			<SubItem>
+				<Name>SerStatus</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000004}">WORD</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>D</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
+				<ArrayInfo>
+					<LBound>0</LBound>
+					<Elements>64</Elements>
+				</ArrayInfo>
+				<BitSize>512</BitSize>
+				<BitOffs>16</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -307,7 +307,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{958F0433-4AF8-5C73-61BE-F3C671A6F929}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{3A3F0E38-095D-CC41-E1B7-9D528F73A459}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
@@ -316,6 +316,10 @@
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_0</Name>
 							<Comment><![CDATA[ EL2008 channel 1]]></Comment>
 							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
+							<Type GUID="{F64F0EBF-B1A5-1C89-0E06-1F1E4703FBF2}">CAN_IFACE_QUEUE</Type>
 						</Var>
 						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_1</Name>
@@ -356,20 +360,16 @@
 							<Name>GLOBAL_VARS.X003_Out</Name>
 							<Type GUID="{675EF7AA-B859-9A65-9CAB-B83BD9AA10F1}" Namespace="Tc2_SerialCom">PcComOutData</Type>
 						</Var>
-						<Var>
-							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
-							<Type GUID="{F64F0EBF-B1A5-1C89-0E06-1F1E4703FBF2}">CAN_IFACE_QUEUE</Type>
-						</Var>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
 						<Var>
-							<Name>GLOBAL_VARS.X003_In</Name>
-							<Type GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom">PcComInData</Type>
-						</Var>
-						<Var>
 							<Name>EL6751_GVLs.gCanIf_RxMsg</Name>
 							<Type GUID="{F64F0EBF-B1A5-1C89-0E06-1F1E4703FBF2}">CAN_IFACE_QUEUE</Type>
+						</Var>
+						<Var>
+							<Name>GLOBAL_VARS.X003_In</Name>
+							<Type GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom">PcComInData</Type>
 						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2025-07-08T11:27:09">

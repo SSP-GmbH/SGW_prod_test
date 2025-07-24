@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="RawToVoltage" Id="{576a5706-8be0-43f1-83e2-dc930bc13e71}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RawToVoltage : REAL
+VAR_INPUT
+	raw : UINT;            // 0..6000
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+RawToVoltage := UINT_TO_REAL(raw) * 0.01;  // → 0.00…60.00 V
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="RawToCurrent" Id="{1b9b501d-b8f1-4179-abec-44f33dc96542}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RawToCurrent : REAL
+VAR_INPUT
+	raw : UINT;            // 0..500
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+RawToCurrent := UINT_TO_REAL(raw) * 0.01;  // → 0.00…5.00 A
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
