@@ -47,6 +47,9 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\PsuHelpers\BytesToUInt16.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\PsuHelpers\CurrentToRaw.TcPOU">
       <SubType>Code</SubType>
     </Compile>

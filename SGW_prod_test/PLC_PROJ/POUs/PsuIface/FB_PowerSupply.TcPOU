@@ -102,15 +102,31 @@ VAR_INPUT
 END_VAR
 
 VAR
-	raw : UINT;
+	raw    : UINT;
+	hiPart : UINT;
+	loPart : UINT;  
+  	loStr  : STRING(3);
+	hiStr  : STRING(3);
+	txStr  : STRING(20);
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 raw := VoltageToRaw(volts);
 
+// build “VSET1:xx.yy”  
+hiPart := raw / 100;         // integral volts  
+loPart := raw MOD 100;       // hundredths  
+loStr  := UINT_TO_STRING(loPart);  
+IF loPart < 10 THEN  
+	loStr := CONCAT('0', loStr);  
+END_IF;  
+hiStr  := UINT_TO_STRING(hiPart);  
+
+txStr := CONCAT('VSET1:', CONCAT(hiStr, CONCAT('.', loStr)));  
+
 fbSend(
-	SendString := CONCAT(CONCAT('VSET1:', REAL_TO_STRING(volts)), CHR(10)),
+	SendString := txStr,
 	TxBuffer   := bufTx,
 	Error      => _err
 );

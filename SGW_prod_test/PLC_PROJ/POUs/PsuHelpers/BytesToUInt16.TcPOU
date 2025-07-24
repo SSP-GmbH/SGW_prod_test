@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="BytesToUInt16" Id="{92b8578c-be43-415e-9d8c-b36e682fd1ad}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION BytesToUInt16 : UINT
+
+VAR_INPUT
+  highByte : BYTE;  // Most‐significant byte
+  lowByte  : BYTE;  // Least‐significant byte
+END_VAR
+
+VAR
+  _hb  : UINT;
+  _lb  : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+// Shift the high byte into bits 8–15, then OR in the low byte
+_hb := SHL( TO_UINT(highByte), 8 );
+_lb := TO_UINT(lowByte);
+BytesToUInt16 := _hb OR _lb;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
