@@ -7,7 +7,7 @@ PROGRAM MAIN
 VAR
 	CanRx          : CAN_IFACE_QUEUE;
 	CanTx          : CAN_IFACE_QUEUE;
-	i              : INT;
+	i              : UINT;
 	slotIn         : CAN_MsgSlot;
 	slotOut        : CAN_MsgSlot;
 	msgIn          : CAN_MSG;
@@ -26,17 +26,14 @@ VAR
 	FB_PSU         : FB_PowerSupply;
 	initDone       : BOOL := FALSE;
 	
-	JUST_PSU : BOOL := TRUE;
-	SOME_FLAG : BOOL := TRUE;
+	JUST_PSU       : BOOL := FALSE;
+	SOME_FLAG      : BOOL := FALSE;
 
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-IF NOT initDone THEN
-  FB_PSU.Init();
-  initDone := TRUE;
-END_IF
+FB_PSU.Cycle();
 
 IF JUST_PSU AND SOME_FLAG THEN
 
@@ -60,21 +57,43 @@ ELSE
 	
 			16#200:  // Set voltage command
 				IF msgIn.DLC = 2 THEN // Expect DLC = 2
-					rawVoltIn := BytesToUInt16(highByte := msgIn.DATA[1], lowByte := msgIn.DATA[0]);
-					physVoltIn := RawToVoltage(raw := rawVoltIn);
-					FB_PSU.SetVoltage(volts := physVoltIn);
+					rawVoltOut := BytesToUInt16(highByte := msgIn.DATA[1], lowByte := msgIn.DATA[0]);
+					physVoltOut := RawToVoltage(raw := rawVoltOut);
+					FB_PSU.SetVoltage(volts := physVoltOut);
 				END_IF;
 
 			16#300:  // Set current command
 				IF msgIn.DLC = 2 THEN
-					rawCurrentIn := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
-					physCurrentIn := RawToCurrent(raw := rawCurrentIn);
-					FB_PSU.SetCurrent(amps := physCurrentIn);
+					rawCurrentOut := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
+					physCurrentOut := RawToCurrent(raw := rawCurrentOut);
+					FB_PSU.SetCurrent(amps := physCurrentOut);
 				END_IF;
 	
-		  // You could also handle GetVoltage (0x210) or GetCurrent (0x310)
-		  // by reading back right away and sending feedback
-		END_CASE;
+			// You could also handle GetVoltage (0x210) or GetCurrent (0x310)
+			// by reading back right away and sending feedback
+			END_CASE;
+
+			// --- Prepare feedback: voltage at 0x201, current at 0x301 ---
+			// 3A) Read back voltage and compose 0x201
+			physVoltIn := FB_PSU.GetVoltage();
+			rawVoltIn := VoltageToRaw(volts := physVoltIn);
+			msgOut.ID  := 16#201;
+			msgOut.DLC := 2;
+			msgOut.DATA[0] := TO_BYTE(SHR(rawVoltIn, 8));   // MSB
+			msgOut.DATA[1] := TO_BYTE(rawVoltIn AND 16#FF); // LSB
+			slotOut := F_ComposeSlot(msg := msgOut);
+			CanTx.Messages[i*2 + 0] := slotOut;
+
+			// 3B) Read back current and compose 0x301
+			physCurrentIn := FB_PSU.GetCurrent();
+			rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
+			msgOut.ID  := 16#301;
+			msgOut.DLC := 2;
+			msgOut.DATA[0] := TO_BYTE(SHR(rawCurrentIn, 8));
+			msgOut.DATA[1] := TO_BYTE(rawCurrentIn AND 16#FF);
+			slotOut := F_ComposeSlot(msg := msgOut);
+			CanTx.Messages[i*2 + 1] := slotOut;
+
 	  END_FOR
 	END_IF
 
