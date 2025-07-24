@@ -72,9 +72,8 @@ END_VAR
     <Method Name="GetVoltage" Id="{5cbe3dd5-384a-4941-8c1b-2d53f1e3ea31}">
       <Declaration><![CDATA[METHOD GetVoltage : REAL
 VAR
-	_str      : STRING(80);
-	queryBase : STRING(16) := 'VSET1?';
-	txStr     : STRING     := CONCAT(queryBase, CHR(10));;
+	in_str    : STRING(80);
+	txStr     : STRING     := CONCAT('VSET1?', CHR(10));;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -85,19 +84,23 @@ fbSend(
 	Busy       => _busy
 );
 
+Cycle();
+
 fbRecv(
 	Reset           :=  TRUE,
-	Timeout         :=  T#100MS,
+	Timeout         :=  T#0MS,
+	Suffix          := CHR(10),
 	RxBuffer        :=  bufRx,
-	ReceivedString  :=  _str,
+	ReceivedString  :=  in_str,
 	busy            =>  _busy,
 	StringReceived  =>  _isRecv,
 	Error           =>  _err,
-	RxTimeout       =>  _rxTimeout
 );
 
+Cycle();
+
 IF _err = COMERROR_NOERROR AND NOT _rxTimeout THEN
-	GetVoltage := STRING_TO_REAL(_str);
+	GetVoltage := STRING_TO_REAL(in_str);
 ELSE
 	GetVoltage := -1.0;
 END_IF
