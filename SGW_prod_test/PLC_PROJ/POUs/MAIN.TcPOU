@@ -24,10 +24,11 @@ VAR
 	physCurrentOut : REAL := 0.0;
 
 	FB_PSU         : FB_PowerSupply;
-	initDone       : BOOL := FALSE;
-	
+
 	JUST_PSU       : BOOL := FALSE;
 	SOME_FLAG      : BOOL := FALSE;
+
+	out_str1: STRING(80);
 
 END_VAR
 ]]></Declaration>
@@ -75,7 +76,7 @@ ELSE
 
 			// --- Prepare feedback: voltage at 0x201, current at 0x301 ---
 			// 3A) Read back voltage and compose 0x201
-			physVoltIn := FB_PSU.GetVoltage();
+			physVoltIn := FB_PSU.GetVoltage(out_str => out_str1);
 			rawVoltIn := VoltageToRaw(volts := physVoltIn);
 			msgOut.ID  := 16#201;
 			msgOut.DLC := 2;

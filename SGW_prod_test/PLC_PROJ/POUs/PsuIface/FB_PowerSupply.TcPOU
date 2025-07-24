@@ -22,8 +22,6 @@ VAR
   _last   : STRING(80);
   _err    : ComError_t;
   _busy   : BOOL;
-  _isRecv : BOOL := FALSE;
-  _rxTimeout: BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -72,39 +70,54 @@ END_VAR
     <Method Name="GetVoltage" Id="{5cbe3dd5-384a-4941-8c1b-2d53f1e3ea31}">
       <Declaration><![CDATA[METHOD GetVoltage : REAL
 VAR
-	in_str    : STRING(80);
-	txStr     : STRING     := CONCAT('VSET1?', CHR(10));;
+  fbSend         : SendString;
+  fbRecv         : ReceiveString;
+  trigRecvReset  : R_TRIG;
+  prevSendBusy   : BOOL := FALSE;  // remember last scan’s busy flag
+  sendBusy       : BOOL;           // current busy flag
+  isRecv         : BOOL;           // ReceiveString output
+  in_str         : STRING(80);
+  rxErr          : ComError_t;
+END_VAR
+
+VAR_OUTPUT
+	out_str: STRING(80);
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[
+        <ST><![CDATA[Cycle();
+
+// 1) Send the command
 fbSend(
-	SendString := txStr,
-	TxBuffer   := bufTx,
-	Busy       => _busy
+  SendString := CONCAT('VSET1?', CHR(10)),
+  TxBuffer   := bufTx,
+  Busy       => sendBusy
 );
+
+// 2) Detect the instant that Busy goes TRUE → FALSE
+trigRecvReset(CLK := prevSendBusy AND NOT sendBusy);
+prevSendBusy := sendBusy;  // update for next scan
 
 Cycle();
 
+// 3) Call fbRecv _every_ scan, but only reset it on that one‐scan pulse
 fbRecv(
-	Reset           :=  TRUE,
-	Timeout         :=  T#0MS,
-	Suffix          := CHR(10),
-	RxBuffer        :=  bufRx,
-	ReceivedString  :=  in_str,
-	busy            =>  _busy,
-	StringReceived  =>  _isRecv,
-	Error           =>  _err,
+  Reset          := trigRecvReset.Q,  // TRUE _only_ the scan after sendDone
+  Suffix         := CHR(10),
+  Timeout        := T#0ms,
+  RxBuffer       := bufRx,
+  ReceivedString := in_str,
+  StringReceived => isRecv,
+  busy           => ,
+  Error          => rxErr
 );
 
-Cycle();
-
-IF _err = COMERROR_NOERROR AND NOT _rxTimeout THEN
-	GetVoltage := STRING_TO_REAL(in_str);
+// 4) Now you’ll see isRecv = TRUE when the LF arrives
+IF (rxErr = COMERROR_NOERROR) AND isRecv THEN
+  GetVoltage := STRING_TO_REAL(in_str);
 ELSE
-	GetVoltage := -1.0;
-END_IF
-]]></ST>
+  GetVoltage := -1.0;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetCurrent" Id="{92d298c1-4504-41de-9c93-8ab098dc5841}">
