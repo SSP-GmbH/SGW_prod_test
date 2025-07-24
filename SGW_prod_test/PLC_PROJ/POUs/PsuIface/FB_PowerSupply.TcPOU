@@ -2,26 +2,27 @@
 <TcPlcObject Version="1.1.0.1">
   <POU Name="FB_PowerSupply" Id="{f3e68b85-65b6-4432-9207-06eca8c7a1d9}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_PowerSupply
-
-VAR_INPUT
-  pComIn     : POINTER TO BYTE;
-  SizeComIn  : UDINT;
-END_VAR
-
-VAR_IN_OUT
-  pComOut    : POINTER TO BYTE;
-  SizeComOut : UDINT;
-END_VAR
-
 VAR
-  fbPort  : SerialLineControl;  // call every scan
-  fbSend  : SendString;
-  fbRecv  : ReceiveString;
-  bufTx   : ComBuffer;          // your existing TxBuf
-  bufRx   : ComBuffer;          // your existing RxBuf
-  _last   : STRING(80);
-  _err    : ComError_t;
-  _busy   : BOOL;
+	pComIn     : POINTER TO BYTE;
+	SizeComIn  : UDINT;
+	pComOut    : POINTER TO BYTE;
+	SizeComOut : UDINT;
+
+	fbPort   : SerialLineControl;  // call every scan
+	fbSend   : SendString;
+	fbRecv   : ReceiveString;
+
+	_bufTx   : ComBuffer;          // your existing TxBuf
+	_bufRx   : ComBuffer;          // your existing RxBuf
+
+	_txErr   : ComError_t;
+	_rxErr   : ComError_t;
+	_txBusy  : BOOL;
+	_rxBusy  : BOOL;
+	_Recvd   : BOOL;
+
+	trigRecvReset : R_TRIG;
+
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -32,28 +33,28 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT fbPort.initialized THEN
-  	bufTx.RdIdx    := 0;
-	bufTx.WrIdx    := 0;
-	bufTx.Count    := 0;
-	bufTx.FreeByte := SIZEOF(bufTx.Buffer);
-	bufTx.Error    := 0;
-	bufTx.blocked  := FALSE;
+  	_bufTx.RdIdx    := 0;
+	_bufTx.WrIdx    := 0;
+	_bufTx.Count    := 0;
+	_bufTx.FreeByte := SIZEOF(_bufTx.Buffer);
+	_bufTx.Error    := 0;
+	_bufTx.blocked  := FALSE;
 
-	bufRx.RdIdx    := 0;
-	bufRx.WrIdx    := 0;
-	bufRx.Count    := 0;
-	bufRx.FreeByte := SIZEOF(bufRx.Buffer);
-	bufRx.Error    := 0;
-	bufRx.blocked  := FALSE;
+	_bufRx.RdIdx    := 0;
+	_bufRx.WrIdx    := 0;
+	_bufRx.Count    := 0;
+	_bufRx.FreeByte := SIZEOF(_bufRx.Buffer);
+	_bufRx.Error    := 0;
+	_bufRx.blocked  := FALSE;
 END_IF
 
 fbPort(
-    Mode      := SERIALLINEMODE_DEFAULT,                   // 8N1, 115 200 Bd …
-    pComIn    := ADR(GLOBAL_VARS.X003_In),                 // process-image in
-    pComOut   := ADR(GLOBAL_VARS.X003_Out),                // process-image out
+    Mode      := SERIALLINEMODE_DEFAULT,
+    pComIn    := ADR(GLOBAL_VARS.X003_In),
+    pComOut   := ADR(GLOBAL_VARS.X003_Out),
     SizeComIn := SIZEOF(GLOBAL_VARS.X003_In),
-    TxBuffer  := bufTx,
-    RxBuffer  := bufRx
+    TxBuffer  := _bufTx,
+    RxBuffer  := _bufRx
 );
 ]]></ST>
       </Implementation>
@@ -70,18 +71,7 @@ END_VAR
     <Method Name="GetVoltage" Id="{5cbe3dd5-384a-4941-8c1b-2d53f1e3ea31}">
       <Declaration><![CDATA[METHOD GetVoltage : REAL
 VAR
-  fbSend         : SendString;
-  fbRecv         : ReceiveString;
-  trigRecvReset  : R_TRIG;
-  prevSendBusy   : BOOL := FALSE;  // remember last scan’s busy flag
-  sendBusy       : BOOL;           // current busy flag
-  isRecv         : BOOL;           // ReceiveString output
-  in_str         : STRING(80);
-  rxErr          : ComError_t;
-END_VAR
-
-VAR_OUTPUT
-	out_str: STRING(80);
+	temp_str : STRING(80);
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -89,35 +79,33 @@ END_VAR
 
 // 1) Send the command
 fbSend(
-  SendString := CONCAT('VSET1?', CHR(10)),
-  TxBuffer   := bufTx,
-  Busy       => sendBusy
+	SendString := CONCAT('VSET1?', CHR(10)),
+	TxBuffer   := _bufTx,
+	Busy       => _txBusy
 );
 
 // 2) Detect the instant that Busy goes TRUE → FALSE
-trigRecvReset(CLK := prevSendBusy AND NOT sendBusy);
-prevSendBusy := sendBusy;  // update for next scan
-
-Cycle();
+trigRecvReset(CLK := _txBusy);
 
 // 3) Call fbRecv _every_ scan, but only reset it on that one‐scan pulse
 fbRecv(
-  Reset          := trigRecvReset.Q,  // TRUE _only_ the scan after sendDone
-  Suffix         := CHR(10),
-  Timeout        := T#0ms,
-  RxBuffer       := bufRx,
-  ReceivedString := in_str,
-  StringReceived => isRecv,
-  busy           => ,
-  Error          => rxErr
+	Reset          := trigRecvReset.Q,  // TRUE _only_ the scan after sendDone
+	Suffix         := CHR(10),
+	Timeout        := T#0ms,
+	RxBuffer       := _bufRx,
+	ReceivedString := temp_str,
+	StringReceived => _Recvd,
+	busy           => ,
+	Error          => _rxErr
 );
 
 // 4) Now you’ll see isRecv = TRUE when the LF arrives
-IF (rxErr = COMERROR_NOERROR) AND isRecv THEN
-  GetVoltage := STRING_TO_REAL(in_str);
+IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
+	GetVoltage := STRING_TO_REAL(temp_str);
 ELSE
-  GetVoltage := -1.0;
-END_IF]]></ST>
+	GetVoltage := -1.0;
+END_IF
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetCurrent" Id="{92d298c1-4504-41de-9c93-8ab098dc5841}">
@@ -163,8 +151,8 @@ txStr := CONCAT(CONCAT('VSET1:', CONCAT(hiStr, CONCAT('.', loStr))), CHR(10));
 
 fbSend(
 	SendString := txStr,
-	TxBuffer   := bufTx,
-	Error      => _err
+	TxBuffer   := _bufTx,
+	Error      => _txErr
 );
 ]]></ST>
       </Implementation>
