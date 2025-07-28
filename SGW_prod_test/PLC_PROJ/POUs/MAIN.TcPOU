@@ -29,20 +29,14 @@ VAR
 	feedbackTmr    : TON;    // On-delay timer for periodic feedback
 	feedbackReq    : BOOL;   // Pulses TRUE once every 100 ms when Q rises
 
-	JUST_PSU       : BOOL := FALSE;
-	SOME_FLAG      : BOOL := FALSE;
+	ALGO_RUN       : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 FB_PSU.Cycle();
 
-IF JUST_PSU AND SOME_FLAG THEN
-
-	FB_PSU.SetVoltage(volts := physVoltIn);
-	SOME_FLAG := FALSE;
-
-ELSE
+IF ALGO_RUN THEN
 
 	feedbackTmr(IN := TRUE, PT := T#100MS);  
 	feedbackReq := feedbackTmr.Q;  
