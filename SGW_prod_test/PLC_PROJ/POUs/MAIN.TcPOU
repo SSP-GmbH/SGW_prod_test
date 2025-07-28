@@ -25,6 +25,9 @@ VAR
 	physCurrentOut : REAL := 0.0;
 
 	FB_PSU         : FB_PowerSupply;
+	
+	feedbackTmr    : TON;    // On-delay timer for periodic feedback
+	feedbackReq    : BOOL;   // Pulses TRUE once every 100 ms when Q rises
 
 	JUST_PSU       : BOOL := FALSE;
 	SOME_FLAG      : BOOL := FALSE;
@@ -41,78 +44,77 @@ IF JUST_PSU AND SOME_FLAG THEN
 
 ELSE
 
-	physVoltIn := FB_PSU.GetVoltage();
-	rawVoltIn := VoltageToRaw(volts := physVoltIn);
-	physCurrentIn := FB_PSU.GetCurrent();
-	rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
+	feedbackTmr(IN := TRUE, PT := T#100MS);  
+	feedbackReq := feedbackTmr.Q;  
+	IF feedbackReq THEN  
+	  feedbackTmr(IN := FALSE);  
+	END_IF  
 
-	// 1) Read the hardware Rx shadow
-	CanRx := EL6751_GVLs.gCanIf_RxMsg;
+	// When timer fires, send voltage and current feedback
+	IF feedbackReq THEN
 
-	// 2) Process all received messages
+		// Read latest physical values
+		physVoltIn := FB_PSU.GetVoltage();
+		rawVoltIn := VoltageToRaw(volts := physVoltIn);
+		physCurrentIn := FB_PSU.GetCurrent();
+		rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
+
+		// Read back voltage and compose 0x201
+		msgOut.ID  := 16#201;
+		msgOut.DLC := 2;
+		msgOut.DATA[1] := TO_BYTE(SHR(rawVoltIn, 8));   // MSB
+		msgOut.DATA[0] := TO_BYTE(rawVoltIn AND 16#FF); // LSB
+		slotOut := F_ComposeSlot(msg := msgOut);
+		CanTx.Messages[0] := slotOut;
+
+		// Read back current and compose 0x301
+		msgOut.ID  := 16#301;
+		msgOut.DLC := 2;
+		msgOut.DATA[1] := TO_BYTE(SHR(rawCurrentIn, 8));
+		msgOut.DATA[0] := TO_BYTE(rawCurrentIn AND 16#FF);
+		slotOut := F_ComposeSlot(msg := msgOut);
+		CanTx.Messages[1] := slotOut;
+
+		// Finalize and trigger EtherCAT send
+		CanTx.NoOfMessages := 2;
+		CanTx.TxCounter    := EL6751_GVLs.gCanIf_TxMsg.TxCounter + 1;
+		EL6751_GVLs.gCanIf_TxMsg := CanTx;
+	END_IF
+
+
+	CanRx := EL6751_GVLs.gCanIf_RxMsg; // Create a copy of the hardware mapped CAN Rx Queue
+	// Process all received messages
 	IF CanRx.NoOfMessages > 0 THEN
-		// Prepare Tx queue index
 		FOR i := 0 TO CanRx.NoOfMessages - 1 DO
-	
 			slotIn := CanRx.Messages[i];
 			msgIn := F_ParseSlot(slot := slotIn);
 	
-			// Route by ID
+			// Handle by CAN ID
 			CASE msgIn.ID OF
 	
-			16#100:  // Set voltage command
-				IF msgIn.DLC = 8 THEN // Expect DLC = 8
+			16#100:  // Relay control
+				IF msgIn.DLC = 8 THEN
 					GLOBAL_VARS.DO_EL2008_RELAY_0 := msgIn.DATA[0] = 1;
 					GLOBAL_VARS.DO_EL2008_RELAY_1 := msgIn.DATA[1] = 1;
 				END_IF;
 
-			16#200:  // Set voltage command
-				IF msgIn.DLC = 2 THEN // Expect DLC = 2
+			16#200:  // Voltage control
+				IF msgIn.DLC = 2 THEN
 					rawVoltOut := BytesToUInt16(highByte := msgIn.DATA[1], lowByte := msgIn.DATA[0]);
 					physVoltOut := RawToVoltage(raw := rawVoltOut);
 					FB_PSU.SetVoltage(volts := physVoltOut);
 				END_IF;
 
-			16#300:  // Set current command
+			16#300:  // Current control
 				IF msgIn.DLC = 2 THEN
 					rawCurrentOut := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
 					physCurrentOut := RawToCurrent(raw := rawCurrentOut);
 					FB_PSU.SetCurrent(amps := physCurrentOut);
 				END_IF;
-	
-			// You could also handle GetVoltage (0x210) or GetCurrent (0x310)
-			// by reading back right away and sending feedback
+
 			END_CASE;
-
-			// --- Prepare feedback: voltage at 0x201, current at 0x301 ---
-			// 3A) Read back voltage and compose 0x201
-			msgOut.ID  := 16#201;
-			msgOut.DLC := 2;
-			msgOut.DATA[1] := TO_BYTE(SHR(rawVoltIn, 8));   // MSB
-			msgOut.DATA[0] := TO_BYTE(rawVoltIn AND 16#FF); // LSB
-			slotOut := F_ComposeSlot(msg := msgOut);
-			CanTx.Messages[i*2 + 0] := slotOut;
-
-			// 3B) Read back current and compose 0x301
-			msgOut.ID  := 16#301;
-			msgOut.DLC := 2;
-			msgOut.DATA[1] := TO_BYTE(SHR(rawCurrentIn, 8));
-			msgOut.DATA[0] := TO_BYTE(rawCurrentIn AND 16#FF);
-			slotOut := F_ComposeSlot(msg := msgOut);
-			CanTx.Messages[i*2 + 1] := slotOut;
-			
-			
-			
 		END_FOR
-
-	// 4) Finalize Tx queue
-	// Number of slots used = 2 × received commands
-	CanTx.NoOfMessages := CanRx.NoOfMessages * 2;
-	CanTx.TxCounter := CanTx.TxCounter + 1;
 	END_IF
-
-	// 5) Write back to hardware shadow
-	EL6751_GVLs.gCanIf_TxMsg := CanTx;
 END_IF]]></ST>
     </Implementation>
   </POU>
