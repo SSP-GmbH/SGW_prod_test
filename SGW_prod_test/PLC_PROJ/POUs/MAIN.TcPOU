@@ -107,7 +107,7 @@ ELSE
 
 			16#300:  // Current control
 				IF msgIn.DLC = 2 THEN
-					rawCurrentOut := SHL(TO_UINT(msgIn.DATA[0]), 8) OR TO_UINT(msgIn.DATA[1]);
+					rawCurrentOut := SHL(TO_UINT(msgIn.DATA[1]), 8) OR TO_UINT(msgIn.DATA[0]);
 					physCurrentOut := RawToCurrent(raw := rawCurrentOut);
 					FB_PSU.SetCurrent(amps := physCurrentOut);
 				END_IF;

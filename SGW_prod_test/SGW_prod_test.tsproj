@@ -307,19 +307,19 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{8B987D70-2739-2CDF-38FF-2D1E91A85C3B}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{3810E78B-7FFE-AF8B-1FC3-E81CFAD49C4C}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
 						<Var>
-							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
-							<Type GUID="{F64F0EBF-B1A5-1C89-0E06-1F1E4703FBF2}">CAN_IFACE_QUEUE</Type>
-						</Var>
-						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_0</Name>
 							<Comment><![CDATA[ EL2008 channel 1]]></Comment>
 							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>EL6751_GVLs.gCanIf_TxMsg</Name>
+							<Type GUID="{F64F0EBF-B1A5-1C89-0E06-1F1E4703FBF2}">CAN_IFACE_QUEUE</Type>
 						</Var>
 						<Var>
 							<Name>GLOBAL_VARS.DO_EL2008_RELAY_1</Name>

@@ -20,11 +20,13 @@ VAR
 	_rxErr   : ComError_t;
 	_txBusy  : BOOL;
 	_rxBusy  : BOOL;
-	_Recvd   : BOOL;
+	_Vrecvd  : BOOL;
+	_Irecvd  : BOOL;
 
 	trigRecvReset : R_TRIG;
 	
-	lastVoltage : REAL;  // holds last valid reading
+	lastVoltage : REAL;
+	lastCurrent : REAL;
 
 END_VAR
 ]]></Declaration>
@@ -74,7 +76,7 @@ END_VAR
 
 // 1) Send the command
 fbSend(
-	SendString := CONCAT('ASET1?', CHR(10)),
+	SendString := CONCAT('ISET1?', CHR(10)),
 	TxBuffer   := _bufTx,
 	Busy       => _txBusy
 );
@@ -91,19 +93,18 @@ fbRecv(
 	Timeout        := T#0ms,
 	RxBuffer       := _bufRx,
 	ReceivedString := temp_str,
-	StringReceived => _Recvd,
+	StringReceived => _Irecvd,
 	busy           => ,
 	Error          => _rxErr
 );
 
 // only update when a fresh line arrived without error
-IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
-    lastVoltage := STRING_TO_REAL(temp_str);
-	fbClearRx(Buffer := _bufRx);
+IF (_rxErr = COMERROR_NOERROR) AND _Irecvd THEN
+    lastCurrent := STRING_TO_REAL(temp_str);
 END_IF
 
 // always return the last known good value
-GetVoltage := lastVoltage;
+GetCurrent := lastCurrent;
 ]]></ST>
       </Implementation>
     </Method>
@@ -136,13 +137,13 @@ fbRecv(
 	Timeout        := T#0ms,
 	RxBuffer       := _bufRx,
 	ReceivedString := temp_str,
-	StringReceived => _Recvd,
+	StringReceived => _Vrecvd,
 	busy           => ,
 	Error          => _rxErr
 );
 
 // only update when a fresh line arrived without error
-IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
+IF (_rxErr = COMERROR_NOERROR) AND _Vrecvd THEN
     lastVoltage := STRING_TO_REAL(temp_str);
 	fbClearRx(Buffer := _bufRx);
 END_IF
@@ -174,8 +175,8 @@ END_VAR
 raw := VoltageToRaw(amps);
 
 // build “VSET1:xx.yy”  
-hiPart := raw / 1000;         // integral volts
-loPart := raw MOD 1000;       // thousandts
+hiPart := raw / 100;         // integral volts
+loPart := raw MOD 100;       // thousandts
 loStr  := UINT_TO_STRING(loPart);
 
 IF loPart < 10 THEN  
@@ -183,7 +184,7 @@ IF loPart < 10 THEN
 END_IF;  
 hiStr  := UINT_TO_STRING(hiPart);  
 
-txStr := CONCAT(CONCAT('ASET1:', CONCAT(hiStr, CONCAT('.', loStr))), CHR(10));  
+txStr := CONCAT(CONCAT('ISET1:', CONCAT(hiStr, CONCAT('.', loStr))), CHR(10));  
 
 fbSend(
 	SendString := txStr,
