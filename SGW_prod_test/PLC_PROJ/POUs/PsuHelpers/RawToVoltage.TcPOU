@@ -7,7 +7,7 @@ VAR_INPUT
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-RawToVoltage := UINT_TO_REAL(raw) * 0.1;  // → 0.00…60.00 V
+RawToVoltage := UINT_TO_REAL(raw) * 0.01;  // → 0.00…60.00 V
 ]]></ST>
     </Implementation>
   </POU>

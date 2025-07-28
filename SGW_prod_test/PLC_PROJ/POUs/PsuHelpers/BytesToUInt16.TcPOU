@@ -18,7 +18,8 @@ END_VAR
 // Shift the high byte into bits 8–15, then OR in the low byte
 _hb := SHL( TO_UINT(highByte), 8 );
 _lb := TO_UINT(lowByte);
-BytesToUInt16 := _hb OR _lb;]]></ST>
+BytesToUInt16 := _hb OR _lb;
+]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
