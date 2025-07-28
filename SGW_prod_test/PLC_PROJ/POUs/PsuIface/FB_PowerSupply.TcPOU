@@ -11,6 +11,7 @@ VAR
 	fbPort   : SerialLineControl;  // call every scan
 	fbSend   : SendString;
 	fbRecv   : ReceiveString;
+	fbClearRx : ClearComBuffer;
 
 	_bufTx   : ComBuffer;          // your existing TxBuf
 	_bufRx   : ComBuffer;          // your existing RxBuf
@@ -107,6 +108,7 @@ fbRecv(
 // only update when a fresh line arrived without error
 IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
     lastVoltage := STRING_TO_REAL(temp_str);
+	fbClearRx(Buffer := _bufRx);
 END_IF
 
 // always return the last known good value
