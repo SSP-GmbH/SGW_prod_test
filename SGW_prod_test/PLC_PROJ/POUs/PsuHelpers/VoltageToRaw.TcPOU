@@ -3,7 +3,7 @@
   <POU Name="VoltageToRaw" Id="{4d3f72b6-97f0-450d-a6ff-259118758552}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION VoltageToRaw : UINT
 VAR_INPUT
-	volts : REAL;          // 0.00…60.00
+	volts : REAL;          // 0.00 to 60.00
 END_VAR
 VAR
   tmp : REAL;

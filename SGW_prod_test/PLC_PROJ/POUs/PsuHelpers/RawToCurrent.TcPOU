@@ -3,12 +3,12 @@
   <POU Name="RawToCurrent" Id="{1b9b501d-b8f1-4179-abec-44f33dc96542}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION RawToCurrent : REAL
 VAR_INPUT
-	raw : UINT;            // 0..500
+	raw : UINT;            // 0 to 5000
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-RawToCurrent := UINT_TO_REAL(raw) * 0.01;  // → 0.00…5.00 A
+RawToCurrent := UINT_TO_REAL(raw) * 0.001;  // → 0.00 to 5.00 A
 ]]></ST>
     </Implementation>
   </POU>

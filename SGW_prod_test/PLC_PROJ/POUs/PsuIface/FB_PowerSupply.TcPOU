@@ -64,18 +64,54 @@ fbPort(
     </Method>
     <Method Name="GetCurrent" Id="{3c0f19b5-476c-46aa-8d4c-37fda8b65d44}">
       <Declaration><![CDATA[METHOD GetCurrent : REAL
-VAR_INPUT
+
+VAR
+	temp_str : STRING(80);
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[Cycle();
+
+// 1) Send the command
+fbSend(
+	SendString := CONCAT('ASET1?', CHR(10)),
+	TxBuffer   := _bufTx,
+	Busy       => _txBusy
+);
+
+// 2) Detect the instant that Busy goes TRUE → FALSE
+trigRecvReset(CLK := _txBusy);
+
+Cycle();
+
+// 3) Call fbRecv _every_ scan, but only reset it on that one‐scan pulse
+fbRecv(
+	Reset          := trigRecvReset.Q,  // TRUE _only_ the scan after sendDone
+	Suffix         := CHR(10),
+	Timeout        := T#0ms,
+	RxBuffer       := _bufRx,
+	ReceivedString := temp_str,
+	StringReceived => _Recvd,
+	busy           => ,
+	Error          => _rxErr
+);
+
+// only update when a fresh line arrived without error
+IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
+    lastVoltage := STRING_TO_REAL(temp_str);
+	fbClearRx(Buffer := _bufRx);
+END_IF
+
+// always return the last known good value
+GetVoltage := lastVoltage;
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetVoltage" Id="{5cbe3dd5-384a-4941-8c1b-2d53f1e3ea31}">
       <Declaration><![CDATA[METHOD GetVoltage : REAL
+
 VAR
 	temp_str : STRING(80);
-	
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -118,12 +154,43 @@ GetVoltage := lastVoltage;
     </Method>
     <Method Name="SetCurrent" Id="{92d298c1-4504-41de-9c93-8ab098dc5841}">
       <Declaration><![CDATA[METHOD SetCurrent
+
 VAR_INPUT
 	amps : REAL;
 END_VAR
+
+VAR
+	raw    : UINT;
+	hiPart : UINT;
+	loPart : UINT;  
+  	loStr  : STRING(3);
+	hiStr  : STRING(3);
+	txStr  : STRING(20);
+END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[Cycle();
+
+raw := VoltageToRaw(amps);
+
+// build “VSET1:xx.yy”  
+hiPart := raw / 1000;         // integral volts
+loPart := raw MOD 1000;       // thousandts
+loStr  := UINT_TO_STRING(loPart);
+
+IF loPart < 10 THEN  
+	loStr := CONCAT('0', loStr);  
+END_IF;  
+hiStr  := UINT_TO_STRING(hiPart);  
+
+txStr := CONCAT(CONCAT('ASET1:', CONCAT(hiStr, CONCAT('.', loStr))), CHR(10));  
+
+fbSend(
+	SendString := txStr,
+	TxBuffer   := _bufTx,
+	Error      => _txErr
+);
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetVoltage" Id="{c6b04aa2-4d3e-4b68-8450-de860b530b4f}">
