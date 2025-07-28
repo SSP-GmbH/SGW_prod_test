@@ -73,27 +73,35 @@ ELSE
 
 			// --- Prepare feedback: voltage at 0x201, current at 0x301 ---
 			// 3A) Read back voltage and compose 0x201
-			physVoltIn := FB_PSU.GetVoltage();
-			rawVoltIn := VoltageToRaw(volts := physVoltIn);
 			msgOut.ID  := 16#201;
 			msgOut.DLC := 2;
-			msgOut.DATA[0] := TO_BYTE(SHR(rawVoltIn, 8));   // MSB
-			msgOut.DATA[1] := TO_BYTE(rawVoltIn AND 16#FF); // LSB
+			msgOut.DATA[1] := TO_BYTE(SHR(rawVoltIn, 8));   // MSB
+			msgOut.DATA[0] := TO_BYTE(rawVoltIn AND 16#FF); // LSB
 			slotOut := F_ComposeSlot(msg := msgOut);
 			CanTx.Messages[i*2 + 0] := slotOut;
 
 			// 3B) Read back current and compose 0x301
-			physCurrentIn := FB_PSU.GetCurrent();
-			rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
 			msgOut.ID  := 16#301;
 			msgOut.DLC := 2;
-			msgOut.DATA[0] := TO_BYTE(SHR(rawCurrentIn, 8));
-			msgOut.DATA[1] := TO_BYTE(rawCurrentIn AND 16#FF);
+			msgOut.DATA[1] := TO_BYTE(SHR(rawCurrentIn, 8));
+			msgOut.DATA[0] := TO_BYTE(rawCurrentIn AND 16#FF);
 			slotOut := F_ComposeSlot(msg := msgOut);
 			CanTx.Messages[i*2 + 1] := slotOut;
+		END_FOR
 
-	  END_FOR
+	// 4) Finalize Tx queue
+	// Number of slots used = 2 × received commands
+	CanTx.NoOfMessages := CanRx.NoOfMessages * 2;
+	CanTx.TxCounter := CanTx.TxCounter + 1;
 	END_IF
+
+	physVoltIn := FB_PSU.GetVoltage();
+	rawVoltIn := VoltageToRaw(volts := physVoltIn);
+	physCurrentIn := FB_PSU.GetCurrent();
+	rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
+
+// 5) Write back to hardware shadow
+EL6751_GVLs.gCanIf_TxMsg := CanTx;
 
 END_IF]]></ST>
     </Implementation>

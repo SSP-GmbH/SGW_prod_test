@@ -22,6 +22,8 @@ VAR
 	_Recvd   : BOOL;
 
 	trigRecvReset : R_TRIG;
+	
+	lastVoltage : REAL;  // holds last valid reading
 
 END_VAR
 ]]></Declaration>
@@ -72,6 +74,7 @@ END_VAR
       <Declaration><![CDATA[METHOD GetVoltage : REAL
 VAR
 	temp_str : STRING(80);
+	
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -87,6 +90,8 @@ fbSend(
 // 2) Detect the instant that Busy goes TRUE → FALSE
 trigRecvReset(CLK := _txBusy);
 
+Cycle();
+
 // 3) Call fbRecv _every_ scan, but only reset it on that one‐scan pulse
 fbRecv(
 	Reset          := trigRecvReset.Q,  // TRUE _only_ the scan after sendDone
@@ -99,12 +104,13 @@ fbRecv(
 	Error          => _rxErr
 );
 
-// 4) Now you’ll see isRecv = TRUE when the LF arrives
+// only update when a fresh line arrived without error
 IF (_rxErr = COMERROR_NOERROR) AND _Recvd THEN
-	GetVoltage := STRING_TO_REAL(temp_str);
-ELSE
-	GetVoltage := -1.0;
+    lastVoltage := STRING_TO_REAL(temp_str);
 END_IF
+
+// always return the last known good value
+GetVoltage := lastVoltage;
 ]]></ST>
       </Implementation>
     </Method>
@@ -135,7 +141,8 @@ VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[
+        <ST><![CDATA[Cycle();
+
 raw := VoltageToRaw(volts);
 
 // build “VSET1:xx.yy”  
