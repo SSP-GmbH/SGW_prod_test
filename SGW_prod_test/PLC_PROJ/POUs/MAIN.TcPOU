@@ -8,6 +8,7 @@ VAR
 	CanRx          : CAN_IFACE_QUEUE;
 	CanTx          : CAN_IFACE_QUEUE;
 	i              : UINT;
+	relayIdx       : UINT;
 	slotIn         : CAN_MsgSlot;
 	slotOut        : CAN_MsgSlot;
 	msgIn          : CAN_MSG;
@@ -39,9 +40,15 @@ IF JUST_PSU AND SOME_FLAG THEN
 	SOME_FLAG := FALSE;
 
 ELSE
+
+	physVoltIn := FB_PSU.GetVoltage();
+	rawVoltIn := VoltageToRaw(volts := physVoltIn);
+	physCurrentIn := FB_PSU.GetCurrent();
+	rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
+
 	// 1) Read the hardware Rx shadow
 	CanRx := EL6751_GVLs.gCanIf_RxMsg;
-	
+
 	// 2) Process all received messages
 	IF CanRx.NoOfMessages > 0 THEN
 		// Prepare Tx queue index
@@ -53,6 +60,12 @@ ELSE
 			// Route by ID
 			CASE msgIn.ID OF
 	
+			16#100:  // Set voltage command
+				IF msgIn.DLC = 8 THEN // Expect DLC = 8
+					GLOBAL_VARS.DO_EL2008_RELAY_0 := msgIn.DATA[0] = 1;
+					GLOBAL_VARS.DO_EL2008_RELAY_1 := msgIn.DATA[1] = 1;
+				END_IF;
+
 			16#200:  // Set voltage command
 				IF msgIn.DLC = 2 THEN // Expect DLC = 2
 					rawVoltOut := BytesToUInt16(highByte := msgIn.DATA[1], lowByte := msgIn.DATA[0]);
@@ -87,6 +100,9 @@ ELSE
 			msgOut.DATA[0] := TO_BYTE(rawCurrentIn AND 16#FF);
 			slotOut := F_ComposeSlot(msg := msgOut);
 			CanTx.Messages[i*2 + 1] := slotOut;
+			
+			
+			
 		END_FOR
 
 	// 4) Finalize Tx queue
@@ -95,14 +111,8 @@ ELSE
 	CanTx.TxCounter := CanTx.TxCounter + 1;
 	END_IF
 
-	physVoltIn := FB_PSU.GetVoltage();
-	rawVoltIn := VoltageToRaw(volts := physVoltIn);
-	physCurrentIn := FB_PSU.GetCurrent();
-	rawCurrentIn := CurrentToRaw(amps := physCurrentIn);
-
-// 5) Write back to hardware shadow
-EL6751_GVLs.gCanIf_TxMsg := CanTx;
-
+	// 5) Write back to hardware shadow
+	EL6751_GVLs.gCanIf_TxMsg := CanTx;
 END_IF]]></ST>
     </Implementation>
   </POU>
