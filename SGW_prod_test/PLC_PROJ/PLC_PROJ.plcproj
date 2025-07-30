@@ -27,6 +27,10 @@
     <Compile Include="DUTs\CAN_MsgSlot.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVLs\ANALOG.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="GVLs\EL6751_GVLs.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>

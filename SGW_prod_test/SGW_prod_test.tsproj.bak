@@ -307,7 +307,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{DCA9E6EF-4BDD-4753-8FCD-0BF8936D78BD}" Name="PLC_PROJ" PrjFilePath="PLC_PROJ\PLC_PROJ.plcproj" TmcFilePath="PLC_PROJ\PLC_PROJ.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C0063855-25AF-33FC-6FBA-5CEDA283E91A}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{19B693F9-C9BB-8289-7F88-527A9516FE52}" TmcPath="PLC_PROJ\PLC_PROJ.tmc">
 					<Name>PLC_PROJ Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="2" AreaNo="1">
@@ -370,6 +370,22 @@
 						<Var>
 							<Name>GLOBAL_VARS.X003_In</Name>
 							<Type GUID="{030FFB8A-A6E9-8903-2886-016014F84E04}" Namespace="Tc2_SerialCom">PcComInData</Type>
+						</Var>
+						<Var>
+							<Name>ANALOG.AL_1</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>ANALOG.AL_2</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>ANALOG.AL_3</Name>
+							<Type>INT</Type>
+						</Var>
+						<Var>
+							<Name>ANALOG.AL_4</Name>
+							<Type>INT</Type>
 						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2025-07-08T11:27:09">
@@ -509,6 +525,13 @@
 								<Link VarA="GLOBAL_VARS.PCout^D[8]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data9" RestoreInfo="ANotFound"/>
 								<Link VarA="GLOBAL_VARS.PCout^D[9]" TypeA="BYTE" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000001}" VarB="Outputs^Data10" RestoreInfo="ANotFound"/>
 								<Link VarA="GLOBAL_VARS.PCout^SerCtrl" TypeA="WORD" InOutA="1" ParentTypeA="PcComOutData" GuidA="{18071995-0000-0000-0000-000000000004}" VarB="Outputs^Ctrl" RestoreInfo="ANotFound"/>
+							</OwnerB>
+						</OwnerA>
+					</UnrestoredVarLinks>
+					<UnrestoredVarLinks ImportTime="2025-07-30T13:39:03">
+						<OwnerA Name="InputDst" Prefix="TIPC^PLC_PROJ^PLC_PROJ Instance" Type="1">
+							<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL3174-0042)">
+								<Link VarA="EL3174_GVLs.AnalogInput_Voltage" TypeA="INT" InOutA="0" GuidA="{18071995-0000-0000-0000-000000000006}" VarB="AI Standard Channel 1^Value" RestoreInfo="ANotFound"/>
 							</OwnerB>
 						</OwnerA>
 					</UnrestoredVarLinks>
@@ -1549,6 +1572,12 @@ Bit1: Value smaller than Limit2]]></Comment>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_OUT_8" VarB="Channel 8^Output"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_RELAY_0" VarB="Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GLOBAL_VARS.DO_EL2008_RELAY_1" VarB="Channel 3^Output"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL3174-0042)">
+				<Link VarA="PlcTask Inputs^ANALOG.AL_1" VarB="AI Standard Channel 1^Value"/>
+				<Link VarA="PlcTask Inputs^ANALOG.AL_2" VarB="AI Standard Channel 2^Value"/>
+				<Link VarA="PlcTask Inputs^ANALOG.AL_3" VarB="AI Standard Channel 3^Value"/>
+				<Link VarA="PlcTask Inputs^ANALOG.AL_4" VarB="AI Standard Channel 4^Value"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 4 (COM Port)">
 				<Link VarA="PlcTask Inputs^GLOBAL_VARS.X003_In^D[0]" VarB="Inputs^Data1"/>

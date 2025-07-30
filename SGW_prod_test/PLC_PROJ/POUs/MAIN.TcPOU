@@ -36,6 +36,8 @@ END_VAR
       <ST><![CDATA[
 FB_PSU.Cycle();
 
+
+
 IF ALGO_RUN THEN
 
 	feedbackTmr(IN := TRUE, PT := T#100MS);  
@@ -46,6 +48,9 @@ IF ALGO_RUN THEN
 
 	// When timer fires, send voltage and current feedback
 	IF feedbackReq THEN
+
+		GLOBAL_VARS.DO_EL2008_RELAY_0 := ANALOG.AL_2 <= 20000;
+		GLOBAL_VARS.DO_EL2008_RELAY_1 := ANALOG.AL_2 > 20000;
 
 		// Read latest physical values
 		physVoltIn := FB_PSU.GetVoltage();
@@ -88,8 +93,8 @@ IF ALGO_RUN THEN
 	
 			16#100:  // Relay control
 				IF msgIn.DLC = 8 THEN
-					GLOBAL_VARS.DO_EL2008_RELAY_0 := msgIn.DATA[0] = 1;
-					GLOBAL_VARS.DO_EL2008_RELAY_1 := msgIn.DATA[1] = 1;
+					// GLOBAL_VARS.DO_EL2008_RELAY_0 := msgIn.DATA[0] = 1;
+					// GLOBAL_VARS.DO_EL2008_RELAY_1 := msgIn.DATA[1] = 1;
 				END_IF;
 
 			16#200:  // Voltage control
